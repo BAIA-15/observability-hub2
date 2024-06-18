@@ -24,4 +24,4 @@ phases:
   pre_build:
     commands:
       - echo "Starting pre-build..."
-      - prebuild.sh
+      - ./${BASE_PATH}/prebuild.sh
