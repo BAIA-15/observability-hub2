@@ -24,4 +24,9 @@ phases:
   pre_build:
     commands:
       - echo "Starting pre-build..."
-      - ./${BASE_PATH}/prebuild.sh
+      - terraform init
+      - terraform validate
+  build:
+    commands:
+      - echo "Starting build..."
+      - terraform plan
