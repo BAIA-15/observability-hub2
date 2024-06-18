@@ -3,6 +3,7 @@ version: 0.2
 env:
   variables:
     ENVIRONMENT: dev
+    TERRAFORM_VERSION: 1.8.5
     BASE_PATH: terraform/elastic
 
 phases:
