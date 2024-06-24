@@ -5,6 +5,8 @@
 ## Summary
 This project aims to deploy a resilient Grafana container on [AWS Fargate](https://aws.amazon.com/fargate/) using the [Grafana Enterprise Docker Image](https://grafana.com/docs/grafana/latest/installation/docker/).
 
+In this solution, Grafana Enterpise is privately hosted using a Docker container application on Amazon Elastic Container Service (Amazon ECS) behind a Network Load Balancer, and the application accessed using AWS PrivateLink. You can then use a private network to securely access services on the Amazon Web Services (AWS) Cloud. Amazon Elastic File System (Amazon EFS) is used if the application requires persistent storage.
+
 * [Terraform](https://www.terraform.io/) is used for infrastructure-as-code and deployment.  
 * Persistance is provided by [Amazon EFS and AWS Fargate support](https://aws.amazon.com/about-aws/whats-new/2020/04/amazon-ecs-aws-fargate-support-amazon-efs-filesystems-generally-available/).  
 * High Availability is supported but Autoscaling of the container is not provided at this point i.e. the ECS/Fargate service will ensure that only **one** Grafana container is online between Availability Zone A or B. 
@@ -41,7 +43,6 @@ git clone https://github.com/aws-samples/aws-cdk-grafana
 cd aws-cdk-grafana
 npm install
 ```
-
 
 ## AWS requirements
 Grafana Enterprise requires these AWS resources:
@@ -350,6 +351,11 @@ aws ecs register-task-definition \
 * Desired tasks: 1
 
 
+
+
+
+
+
 ## Configure Grafana Enterprise
 
 ### Plugins and data
@@ -383,6 +389,7 @@ The ServiceNow data source plugin allows you to query and visualize data from Se
 * [Securing Amazon ECS workloads on AWS Fargate with customer managed keys](https://aws.amazon.com/blogs/compute/securing-amazon-ecs-workloads-on-aws-fargate-with-customer-managed-keys/)
 * [Activate a Grafana Enterprise license from AWS Marketplace on ECS](https://grafana.com/docs/grafana/latest/administration/enterprise-licensing/activate-aws-marketplace-license/activate-license-on-ecs/)
 * [Managing Secrets for Amazon ECS Applications Using Parameter Store and IAM Roles for Tasks](https://aws.amazon.com/blogs/compute/managing-secrets-for-amazon-ecs-applications-using-parameter-store-and-iam-roles-for-tasks/)
+* [Access container applications privately on Amazon ECS by using AWS PrivateLink and a Network Load Balancer](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/access-container-applications-privately-on-amazon-ecs-by-using-aws-privatelink-and-a-network-load-balancer.html)
 
 ### AWS CLI
 * [KMS create-key](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/kms/create-key.html)
