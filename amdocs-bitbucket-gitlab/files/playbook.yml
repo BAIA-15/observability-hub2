@@ -1,0 +1,117 @@
+- hosts: all
+  become: true
+
+  environment:
+    http_proxy: ${forward_proxy}
+    https_proxy: ${forward_proxy}
+    HTTPS_PROXY: ${forward_proxy}
+    no_proxy: 169.254.169.254
+
+  tasks:
+  - name: Check if BitBucket is already installed
+    ansible.builtin.stat:
+      path: /opt/atlassian/bitbucket/${bitbucket_version}
+    register: bb_is_installed
+
+  - name: Install git
+    ansible.builtin.package:
+      name: git
+      state: present
+
+  - name: Install pip
+    ansible.builtin.package:
+      name: python3-pip
+      state: present
+
+  - name: Install boto3 and botocore
+    ansible.builtin.pip:
+      name:
+      - boto3
+      - botocore
+      - psycopg2-binary
+      extra_args: -i https://pypi.org/simple --disable-pip-version-check
+
+  - name: Install AWS Collection
+    ansible.builtin.shell: ansible-galaxy collection install amazon.aws
+
+  - name: Install PostgreSQL Collection
+    ansible.builtin.shell: ansible-galaxy collection install community.postgresql
+
+  - name: Download BitBucket
+    ansible.builtin.get_url:
+      url: https://product-downloads.atlassian.com/software/stash/downloads/${bitbucket_installer}
+      dest: /tmp/${bitbucket_installer}
+      mode: '0755'
+    when: not bb_is_installed.stat.exists
+
+  - name: Creating BitBucket Installer Answer File
+    copy:
+      dest: /tmp/answer_file.conf
+      content: |
+        app.install.service$Boolean=true
+        launch.application$Boolean=false
+
+        portChoice=custom
+        httpPort=7990
+
+        app.bitbucketHome=/opt/atlassian/bitbucket/data
+        app.defaultInstallDir=/opt/atlassian/bitbucket/${bitbucket_version}
+    when: not bb_is_installed.stat.exists
+
+  - name: Execute BitBucket Installer
+    ansible.builtin.shell: /tmp/${bitbucket_installer} -q -varfile /tmp/answer_file.conf
+    ignore_errors: true
+    when: not bb_is_installed.stat.exists
+
+  - name: Configure BitBucket Database and User
+    postgresql_user:
+      login_host: ${database_endpoint}
+      login_user: postgres
+      login_password: "{{ (lookup('aws_secret', '${secret_name}', region='${region}') | from_json).admin_database_password }}"
+      db: bitbucket
+      name: bitbucket
+      password: "{{ (lookup('aws_secret', '${secret_name}', region='${region}') | from_json).database_password }}"
+      ssl_mode: require
+    when: not bb_is_installed.stat.exists
+
+  - name: Configure privileges
+    become_user: root
+    postgresql_owner:
+      login_host: ${database_endpoint}
+      login_user: postgres
+      login_password: "{{ (lookup('aws_secret', '${secret_name}', region='${region}') | from_json).admin_database_password }}"
+      db: bitbucket
+      new_owner: bitbucket
+      obj_name: bitbucket
+      obj_type: database
+      ssl_mode: require
+    when: not bb_is_installed.stat.exists
+
+
+  - name: Creating bitbucket.properties File
+    copy:
+      dest: /opt/atlassian/bitbucket/data/shared/bitbucket.properties
+      content: |
+        server.port=7990
+        server.secure=${server_secure}
+        server.scheme=${server_scheme}
+        setup.baseUrl=https://${domain_name}
+        setup.license=${bitbucket_license}
+        setup.sysadmin.username=${admin_username}
+        setup.sysadmin.password={{ (lookup('aws_secret', '${secret_name}', region='${region}') | from_json).admin_password }}
+        setup.sysadmin.displayName=${admin_displayname}
+        setup.sysadmin.emailAddress=${admin_email}
+        jdbc.driver=org.postgresql.Driver
+        jdbc.url=jdbc:postgresql://${database_endpoint}:${database_port}/bitbucket
+        jdbc.user=bitbucket
+        jdbc.password={{ (lookup('aws_secret', '${secret_name}', region='${region}') | from_json).database_password }}
+    when: not bb_is_installed.stat.exists
+
+  - name: Wait for BitBucket to start...
+    ansible.builtin.pause:
+      seconds: 60
+    when: not bb_is_installed.stat.exists
+
+  - name: Reboot System
+    ansible.builtin.shell: shutdown -r now
+    when: not bb_is_installed.stat.exists

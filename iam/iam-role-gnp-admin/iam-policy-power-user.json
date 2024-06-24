@@ -1,0 +1,38 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "NotAction": [
+                "iam:*",
+                "organizations:*",
+                "account:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole",
+                "iam:DeleteServiceLinkedRole",
+                "iam:ListRoles",
+                "organizations:DescribeOrganization",
+                "account:ListRegions",
+                "account:GetAccountInformation"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "DenyPurchases",
+            "Effect": "Deny",
+            "Action": [
+                "ec2:PurchaseReserved*",
+                "rds:PurchaseReserved*",
+                "redshift:PurchaseReserved*",
+                "elasticache:PurchaseReserved*",
+                "opensearch:PurchaseReserved*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

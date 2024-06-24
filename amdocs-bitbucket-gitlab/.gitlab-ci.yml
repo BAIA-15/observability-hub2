@@ -1,0 +1,76 @@
+stages:
+  - validate
+  - plan
+  - apply
+
+default:
+  tags:
+    - core
+
+variables:
+  TF_BACKEND_BUCKET: optus-au-amdocstooling-dev-state-mgmt
+  TF_BACKEND_ROLE: arn:aws:iam::339713147971:role/terraform-state-mgmt-10NABZDV18ba_12v
+  TF_DESTROY: "False"
+  TF_VERSION: 1.7.4
+
+tf_validate_plan:
+  image:
+    name: hashicorp/terraform:${TF_VERSION}
+  stage: validate
+  only:
+    - merge_request
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@iacprdgitla001.nix.au.singtelgroup.net".insteadOf "https://iacprdgitla001.nix.au.singtelgroup.net"
+  script: |
+    terraform init -backend-config="bucket=${TF_BACKEND_BUCKET}" -backend-config="role_arn=${TF_BACKEND_ROLE}"
+    terraform validate
+    terraform plan
+
+tf_plan:
+  image:
+    name: hashicorp/terraform:${TF_VERSION}
+  stage: plan
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@iacprdgitla001.nix.au.singtelgroup.net".insteadOf "https://iacprdgitla001.nix.au.singtelgroup.net"
+  script: |
+    terraform init -backend-config="bucket=${TF_BACKEND_BUCKET}" -backend-config="role_arn=${TF_BACKEND_ROLE}"
+    terraform plan -out terraform.plan
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+      - terraform.plan
+
+tf_apply:
+  image:
+    name: hashicorp/terraform:${TF_VERSION}
+  stage: apply
+  needs:
+    - tf_plan
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  when: manual
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@iacprdgitla001.nix.au.singtelgroup.net".insteadOf "https://iacprdgitla001.nix.au.singtelgroup.net"
+  script: |
+    terraform init -backend-config="bucket=${TF_BACKEND_BUCKET}" -backend-config="role_arn=${TF_BACKEND_ROLE}"
+    terraform apply -auto-approve terraform.plan
+
+tf_destroy:
+  image:
+    name: hashicorp/terraform:${TF_VERSION}
+  stage: apply
+  only:
+    variables:
+      - $TF_DESTROY == "True"
+  when: manual
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@iacprdgitla001.nix.au.singtelgroup.net".insteadOf "https://iacprdgitla001.nix.au.singtelgroup.net"
+  script: |
+    terraform init -backend-config="bucket=${TF_BACKEND_BUCKET}" -backend-config="role_arn=${TF_BACKEND_ROLE}"
+    terraform apply -destroy -auto-approve

@@ -1,0 +1,45 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [        
+        {
+            "Sid": "TodoDenyCreateUpdateRoleWithoutPermissionBoundary",
+            "Effect": "Allow",
+            "Action": [
+                "iam:AttachRolePolicy",
+                "iam:CreateRole",
+                "iam:CreatePolicy",
+                "iam:CreatePolicyVersion",
+                "iam:DeletePolicyVersion",
+                "iam:DetachRolePolicy",
+                "iam:UpdateRole"
+            ],
+            "Resource": "arn:aws:iam::*:role/applicationroles/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+              "iam:CreateInstanceProfile",
+              "iam:AddRoleToInstanceProfile",
+              "iam:RemoveRoleFromInstanceProfile",
+              "iam:DeleteInstanceProfile"
+            ],
+            "Resource": [
+              "arn:aws:iam::*:role/applicationroles/*",
+              "arn:aws:iam::*:instance-profile/applicationinstanceprofiles/*"
+            ]
+        },
+        {
+            "Sid": "PassIamEC2Role",
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::851725631136:role/applicationroles/ec2elasticagent",
+                "arn:aws:iam::851725631136:role/applicationroles/ec2dynatraceactivegate",
+                "arn:aws:iam::851725631136:role/applicationroles/ec2dynatraceoneagent",
+                "arn:aws:iam::851725631136:role/service-role/*"
+            ]
+        }
+    ]
+}

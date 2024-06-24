@@ -1,0 +1,107 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowAll",
+            "Effect": "Allow",
+            "Action": [
+                "access-analyzer:*",
+                "acm:*",
+                "application-autoscaling:*",
+                "applicationinsights:*",
+                "athena:*",
+                "autoscaling:*",
+                "backup:*",
+                "ce:*",
+                "cloudformation:*",
+                "cloudshell:*",
+                "cloudtrail:*",
+                "cloudtrail-data:*",
+                "cloudwatch:*",
+                "compute-optimizer:*",
+                "config:*",
+                "cost-optimization-hub:*",
+                "dlm:*",
+                "ec2:*",
+                "ec2-instance-connect:*",
+                "ec2messages:*",
+                "ecr:*",
+                "elasticloadbalancing:*",
+                "events:*",
+                "firehose:*",
+                "freetier:*",
+                "fsx:*",
+                "health:*",
+                "iam:*",
+                "kinesis:*",
+                "kms:*",
+                "lambda:*",
+                "logs:*",
+                "networkmonitor:*",
+                "oam:*",
+                "pi:*",
+                "pipes:*",
+                "ram:*",
+                "resource-explorer:*",
+                "route53:*",
+                "route53resolver:*",
+                "s3:*",
+                "scheduler:*",
+                "schemas:*",
+                "secretsmanager:*",
+                "sns:*",
+                "sqs:*",
+                "ssm:*",
+                "ssm-guiconnect:*",
+                "ssm-incidents:*",
+                "ssmmessages:*",
+                "support:*",
+                "tag:*",
+                "trustedadvisor:*",
+                "wellarchitected:*",
+                "xray:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "DenyCreateUpdateIAMUser",
+            "Effect": "Deny",
+            "Action": [
+                "iam:CreateUser",
+                "iam:UpdateUser",
+                "iam:DeleteUser"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "EnforceActionsHaveBoundary",
+            "Effect": "Deny",
+            "Action": [
+              "iam:AttachRolePolicy",
+              "iam:CreateRole",
+              "iam:DetachRolePolicy",
+              "iam:PutRolePolicy",
+              "iam:DeleteRolePolicy",
+              "iam:PutRolePermissionsBoundary"
+            ],
+            "Resource": "*",
+            "Condition": {
+              "StringNotLike": {
+                "iam:PermissionsBoundary": "arn:aws:iam::*:policy/ToolingBoundaryPolicy"
+              }
+            }
+          },
+          {
+            "Sid": "DenyChangesToBoundaryPolicy",
+            "Effect": "Deny",
+            "Action": [
+              "iam:DeletePolicy",
+              "iam:CreatePolicyVersion",
+              "iam:CreatePolicy",
+              "iam:DeletePolicyVersion",
+              "iam:SetDefaultPolicyVersion"
+            ],
+            "Resource": "arn:aws:iam::*:policy/ToolingBoundaryPolicy"
+          }
+    ]
+}

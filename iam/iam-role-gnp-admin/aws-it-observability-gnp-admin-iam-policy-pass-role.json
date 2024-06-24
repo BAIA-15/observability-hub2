@@ -1,0 +1,14 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowPassIamRole",
+            "Effect": "Allow",
+            "Action": "iam:PassRole",
+            "Resource": [
+                "arn:aws:iam::851725631136:role/application-observability-ec2-elastic-agent",
+                "arn:aws:iam::851725631136:role/application-observability-ec2-dynatrace-agent"
+            ]
+        }
+    ]
+}
