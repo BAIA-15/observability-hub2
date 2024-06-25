@@ -356,6 +356,21 @@ aws ec2 create-security-group \
     > ./output/ec2-create-security-group-for-ecs-fargate.json
 ```
 
+#### Allow access from my IP address
+
+Get my IP address
+```bash
+curl -o ifconfig.me  ifconfig.me
+```
+
+Authorise EC2 Security Group
+
+```bash
+aws ec2 authorize-security-group-ingress \
+    --group-id $(jq --raw-output '.GroupId' ./output/ec2-create-security-group-for-ecs-fargate.json) \
+    --ip-permissions IpProtocol=tcp,FromPort=3000,ToPort=3000,IpRanges="[{CidrIp=###.###.##.##/32,Description='Web access from NCS office'}]" \
+    --tag-specifications "ResourceType=security-group-rule,Tags=[{Key=Name,Value=$(jq --raw-output '.cluster.clusterName' ./output/ecs-create-cluster.json)},{Key=project,Value=heytaxi}]"
+```
 
 
 ### Create an AWS ECS service
