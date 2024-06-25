@@ -51,6 +51,7 @@ Grafana Enterprise requires these AWS resources:
 * AWS KMS
 * AWS Secrets Manager
 * AWS Elastic Container Registry
+* AWS IAM role - ECS task role
 
 ## Hardware recommendations
 Grafana requires the minimum system resources:
@@ -66,6 +67,70 @@ Some features might require more memory or CPUs, including:
 PrivateLink endpoints can be added using the following command. This will incur additional cost for the endpoints, but will prevent Amazon CloudWatch, EFS (Elastic File System) and Secrets Manager traffic from traversing the public internet.
 
 
+## AWS IAM - ECS Task Role
+
+Role name: application-observability-ecs-grafana-enterprise
+Description: Allows ECS to create and manage AWS resources on your behalf.
+
+### AWS IAM - ECS Task Role - Trust Policy
+
+```json
+{
+    "Version": "2008-10-17",
+    "Statement": [
+        {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "ArnLike": {
+                    "aws:SourceArn": "arn:aws:ecs:ap-southeast-2:851725631136:*"
+                },
+                "StringEquals": {
+                    "aws:SourceAccount": "851725631136"
+                }
+            }
+        }
+    ]
+}
+```
+
+### AWS IAM - ECS Task Role - Permissions
+
+AWS managed policy
+* AmazonEC2ContainerServiceRole
+* AmazonSSMManagedInstanceCore 
+
+AWS custom policy
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"ssm:GetParameters",
+				"secretsmanager:GetSecretValue"
+			],
+			"Resource": [
+				"arn:aws:ssm:ap-southeast-2:851725631136:parameter/grafanaEnterprise*",
+				"arn:aws:secretsmanager:ap-southeast-2:851725631136:secret:grafanaEnterprise*"
+			],
+			"Condition": {
+				"ArnLike": {
+					"aws:SourceArn": "arn:aws:ecs:ap-southeast-2:851725631136:*"
+				},
+				"StringEquals": {
+					"aws:SourceAccount": "851725631136"
+				}
+			}
+		}
+	]
+}
+```
 
 ## Pushing the Grafane Enterprise Docker image to an Amazon ECR private repository
 
@@ -104,6 +169,7 @@ docker push 851725631136.dkr.ecr.ap-southeast-2.amazonaws.com/observability-hub:
 cat > ./output/aws-configuration.json <<EOF
 {
     "account": "851725631136",
+    "ecsTaskRoleArn": "arn:aws:iam::851725631136:role/application-observability-ecs-grafana-enterprise",
     "kmsAdminPrincipalRoleArn": "arn:aws:iam::851725631136:role/AWS-632_Jacob_Cantwell_DBAAdmin",
     "clusterName": "observability-hub-grafana",
     "vpcId": "vpc-03acfc82685dd7a33",
@@ -219,6 +285,26 @@ aws kms create-alias \
     --target-key-id $(jq --raw-output '.KeyMetadata.KeyId' ./output/kms-create-key.json)
 ```
 
+
+## Create AWS Secrets Manager Password for Grafana Admin
+
+    // Grafana Admin Password
+    const grafanaAdminPassword = new secretsmanager.Secret(this, 'grafanaAdminPassword');
+    // Allow Task to access Grafana Admin Password
+    grafanaAdminPassword.grantRead(taskRole);
+
+```bash
+openssl rand -base64 32 > ./output/grafana-credentials.txt
+```
+
+```bash
+aws secretsmanager create-secret \
+    --name grafanaEnterpriseAdminPasswordv1 \
+    --description "Grafana Enterpise admin password" \
+    --secret-string file://output/grafana-credentials.txt \
+    > ./output/secretsmanager-create-secret.json
+```
+
 ### Create an AWS ECS cluster
 
 * Cluster name: observability-hub-grafana
@@ -261,7 +347,7 @@ aws ecs update-cluster \
 * Network mode: awsvpc
 * Task size
     * CPU: 1 vCPU
-    * Memory: 3 GB
+    * Memory: 1 GB
 * Task role: None
 * Task execution role: None
 
@@ -321,6 +407,12 @@ cat > ./output/ecs-fargate-task-definition-grafana.json <<EOF
                 },
                 "secretOptions": []
             },
+            "secrets": [
+                {
+                    "name": "GF_SECURITY_ADMIN_PASSWORD",
+                    "valueFrom": "$(jq --raw-output '.ARN' ./output/secretsmanager-create-secret.json)"
+                }
+            ],
             "systemControls": []
         }
     ],
@@ -330,7 +422,7 @@ cat > ./output/ecs-fargate-task-definition-grafana.json <<EOF
         "FARGATE"
     ],
     "cpu": "1024",
-    "memory": "3072",
+    "memory": "2048",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
@@ -341,7 +433,9 @@ EOF
 
 ```bash
 aws ecs register-task-definition \
+    --task-role-arn $(jq --raw-output '.ecsTaskRoleArn' ./output/aws-configuration.json) \
     --cli-input-json file://output/ecs-fargate-task-definition-grafana.json \
+    --tags key=project,value=$(jq --raw-output '.clusterName' ./output/aws-configuration.json) \
     > ./output/ecs-register-task-definition.json
 ```
 
@@ -371,7 +465,6 @@ aws ec2 authorize-security-group-ingress \
     --ip-permissions IpProtocol=tcp,FromPort=3000,ToPort=3000,IpRanges="[{CidrIp=###.###.##.##/32,Description='Web access from NCS office'}]" \
     --tag-specifications "ResourceType=security-group-rule,Tags=[{Key=Name,Value=$(jq --raw-output '.cluster.clusterName' ./output/ecs-create-cluster.json)},{Key=project,Value=heytaxi}]"
 ```
-
 
 ### Create an AWS ECS service
 
