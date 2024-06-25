@@ -103,9 +103,11 @@ docker push 851725631136.dkr.ecr.ap-southeast-2.amazonaws.com/observability-hub:
 ```bash
 cat > ./output/aws-configuration.json <<EOF
 {
-    "Account": "851725631136",
-    "KmsAdminPrincipalRoleArn": "arn:aws:iam::851725631136:role/AWS-632_Jacob_Cantwell_DBAAdmin",
-    "ClusterName": "observability-hub-grafana"
+    "account": "851725631136",
+    "kmsAdminPrincipalRoleArn": "arn:aws:iam::851725631136:role/AWS-632_Jacob_Cantwell_DBAAdmin",
+    "clusterName": "observability-hub-grafana",
+    "vpcId": "vpc-03acfc82685dd7a33",
+    "subnets": ["subnet-0284b0ef91aea0ea6","subnet-0815036e894d811e5"]
 }
 EOF
 ```
@@ -122,7 +124,7 @@ cat > ./output/kms-key-policy-grafana.json <<EOF
             "Sid": "Enable IAM User Permissions",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::$(jq --raw-output '.Account' ./output/aws-configuration.json):root"
+                "AWS": "arn:aws:iam::$(jq --raw-output '.account' ./output/aws-configuration.json):root"
             },
             "Action": "kms:*",
             "Resource": "*"
@@ -131,7 +133,7 @@ cat > ./output/kms-key-policy-grafana.json <<EOF
             "Sid": "Allow access for Key Administrators",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "$(jq --raw-output '.KmsAdminPrincipalRoleArn' ./output/aws-configuration.json)"
+                "AWS": "$(jq --raw-output '.kmsAdminPrincipalRoleArn' ./output/aws-configuration.json)"
             },
             "Action": [
                 "kms:Create*",
@@ -156,7 +158,7 @@ cat > ./output/kms-key-policy-grafana.json <<EOF
             "Sid": "Allow use of the key",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::$(jq --raw-output '.Account' ./output/aws-configuration.json):role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS"
+                "AWS": "arn:aws:iam::$(jq --raw-output '.account' ./output/aws-configuration.json):role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS"
             },
             "Action": [
                 "kms:Encrypt",
@@ -177,8 +179,8 @@ cat > ./output/kms-key-policy-grafana.json <<EOF
             "Resource": "*",
             "Condition": {
                 "StringEquals": {
-                    "kms:EncryptionContext:aws:ecs:clusterName": "$(jq --raw-output '.ClusterName' ./output/aws-configuration.json)",
-                    "kms:EncryptionContext:aws:ecs:clusterAccount": "$(jq --raw-output '.Account' ./output/aws-configuration.json)"
+                    "kms:EncryptionContext:aws:ecs:clusterName": "$(jq --raw-output '.clusterName' ./output/aws-configuration.json)",
+                    "kms:EncryptionContext:aws:ecs:clusterAccount": "$(jq --raw-output '.account' ./output/aws-configuration.json)"
                 }
             }
         },
@@ -192,8 +194,8 @@ cat > ./output/kms-key-policy-grafana.json <<EOF
             "Resource": "*",
             "Condition": {
                 "StringEquals": {
-                    "kms:EncryptionContext:aws:ecs:clusterName": "$(jq --raw-output '.ClusterName' ./output/aws-configuration.json)",
-                    "kms:EncryptionContext:aws:ecs:clusterAccount": $(jq --raw-output '.Account' ./output/aws-configuration.json)
+                    "kms:EncryptionContext:aws:ecs:clusterName": "$(jq --raw-output '.clusterName' ./output/aws-configuration.json)",
+                    "kms:EncryptionContext:aws:ecs:clusterAccount": $(jq --raw-output '.account' ./output/aws-configuration.json)
                 },
                 "ForAllValues:StringEquals": {
                     "kms:GrantOperations": "Decrypt"
@@ -213,7 +215,7 @@ aws kms create-key \
     > ./output/kms-create-key.json
 
 aws kms create-alias \
-    --alias-name alias/$(jq --raw-output '.ClusterName' ./output/aws-configuration.json) \
+    --alias-name alias/$(jq --raw-output '.clusterName' ./output/aws-configuration.json) \
     --target-key-id $(jq --raw-output '.KeyMetadata.KeyId' ./output/kms-create-key.json)
 ```
 
@@ -233,14 +235,14 @@ aws kms create-alias \
 
 ```bash
 aws ecs create-cluster \
-    --cluster-name $(jq --raw-output '.ClusterName' ./output/aws-configuration.json) \
+    --cluster-name $(jq --raw-output '.clusterName' ./output/aws-configuration.json) \
     --configuration managedStorageConfiguration={kmsKeyId=$(jq --raw-output '.KeyMetadata.KeyId' ./output/kms-create-key.json)} \
-    --tags key=project,value=$(jq --raw-output '.ClusterName' ./output/aws-configuration.json) \
+    --tags key=project,value=$(jq --raw-output '.clusterName' ./output/aws-configuration.json) \
     --settings name=containerInsights,value=enabled \
     > ./output/ecs-create-cluster.json
 ```
 
-ECS update cluster - switching to 
+ECS update cluster example (optional)
 
 ```bash
 aws ecs update-cluster \
@@ -281,7 +283,7 @@ Log collection
 * awslogs-create-group | Value | true
 
 ```bash
-cat > ./output/ecs-task-definition-grafana.json <<EOF
+cat > ./output/ecs-fargate-task-definition-grafana.json <<EOF
 {
     "family": "grafana-enterprise",
     "containerDefinitions": [
@@ -339,8 +341,22 @@ EOF
 
 ```bash
 aws ecs register-task-definition \
-    --cli-input-json file://output/ecs-task-definition-grafana.json
+    --cli-input-json file://output/ecs-fargate-task-definition-grafana.json \
+    > ./output/ecs-register-task-definition.json
 ```
+
+### Create an AWS VPC Security Group for the AWS ECS service
+
+```bash
+aws ec2 create-security-group \
+    --description $(jq --raw-output '.cluster.clusterName' ./output/ecs-create-cluster.json) \
+    --group-name $(jq --raw-output '.cluster.clusterName' ./output/ecs-create-cluster.json) \
+    --vpc-id $(jq -r '.vpcId' ./output/aws-configuration.json) \
+    --tag-specifications "ResourceType=security-group,Tags=[{Key=Name,Value=$(jq --raw-output '.cluster.clusterName' ./output/ecs-create-cluster.json)},{Key=project,Value=heytaxi}]"  \
+    > ./output/ec2-create-security-group-for-ecs-fargate.json
+```
+
+
 
 ### Create an AWS ECS service
 
@@ -350,10 +366,24 @@ aws ecs register-task-definition \
 * Service name: grafana-enterprise
 * Desired tasks: 1
 
+```bash
+aws ecs create-service \
+    --cluster $(jq --raw-output '.cluster.clusterName' ./output/ecs-create-cluster.json) \
+    --service-name "grafana-enterprise" \
+    --task-definition $(jq -r '.taskDefinition.taskDefinitionArn' ./output/ecs-register-task-definition.json) \
+    --desired-count 1 \
+    --launch-type FARGATE \
+    --platform-version LATEST \
+    --network-configuration "awsvpcConfiguration={subnets=$(jq -r '.subnets' ./output/aws-configuration.json),securityGroups=[$(jq -r '.GroupId' ./output/ec2-create-security-group-for-ecs-fargate.json)],assignPublicIp=ENABLED}" \
+    --tags key=Name,value=$(jq --raw-output '.cluster.clusterName' ./output/ecs-create-cluster.json) key=project,value=heytaxi \
+    > ./output/ecs-create-service.json
+```
 
-
-
-
+```
+awsvpcConfiguration={subnets=[subnet-12344321],securityGroups=[sg-12344321],assignPublicIp=ENABLED}
+assignPublicIp=DISABLED
+--load-balancers targetGroupArn=string,loadBalancerName=string,containerName=string,containerPort=integer
+```
 
 
 ## Configure Grafana Enterprise
