@@ -98,11 +98,13 @@ Description: Allows ECS to create and manage AWS resources on your behalf.
 }
 ```
 
-### AWS IAM - ECS Task Role - Permissions
+### AWS IAM - ECS Task Role - Permissions (TODO: reduce for production)
 
 AWS managed policy
 * AmazonEC2ContainerServiceRole
-* AmazonSSMManagedInstanceCore 
+* AmazonSSMManagedInstanceCore
+* SecretsManagerReadWrite (TODO: reduce for production)
+* CloudWatchFullAccess (TODO: reduce for production)
 
 AWS custom policy
 ```json
@@ -127,10 +129,69 @@ AWS custom policy
 					"aws:SourceAccount": "851725631136"
 				}
 			}
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"cloudwatch:Describe*",
+                "cloudwatch:Get*",
+				"cloudwatch:List*",
+                "ec2:Describe*",
+                "tag:GetResources"
+			],
+			"Resource": ["*"],
 		}
 	]
 }
 ```
+
+### AWS IAM - ECS Execution Role - Permissions (TODO: reduce for production)
+
+AWS managed policy
+* AmazonEC2ContainerServiceRole
+* AmazonSSMManagedInstanceCore
+* SecretsManagerReadWrite (TODO: reduce for production)
+* CloudWatchFullAccess (TODO: reduce for production)
+
+AWS custom policy
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"ssm:GetParameters",
+				"secretsmanager:GetSecretValue"
+			],
+			"Resource": [
+				"arn:aws:ssm:ap-southeast-2:851725631136:parameter/grafanaEnterprise*",
+				"arn:aws:secretsmanager:ap-southeast-2:851725631136:secret:grafanaEnterprise*"
+			],
+			"Condition": {
+				"ArnLike": {
+					"aws:SourceArn": "arn:aws:ecs:ap-southeast-2:851725631136:*"
+				},
+				"StringEquals": {
+					"aws:SourceAccount": "851725631136"
+				}
+			}
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"cloudwatch:Describe*",
+                "cloudwatch:Get*",
+				"cloudwatch:List*",
+                "ec2:Describe*",
+                "tag:GetResources"
+			],
+			"Resource": ["*"],
+		}
+	]
+}
+```
+
 
 ## Pushing the Grafane Enterprise Docker image to an Amazon ECR private repository
 
@@ -389,6 +450,10 @@ cat > ./output/ecs-fargate-task-definition-grafana.json <<EOF
             "essential": true,
             "environment": [
                 {
+                    "name": "GF_SECURITY_ADMIN_USER",
+                    "value": "administrator"
+                },
+                {
                     "name": "GF_WHITE_LABELING_APP_TITLE",
                     "value": "HeyTaxi"
                 }
@@ -412,11 +477,9 @@ cat > ./output/ecs-fargate-task-definition-grafana.json <<EOF
                     "name": "GF_SECURITY_ADMIN_PASSWORD",
                     "valueFrom": "$(jq --raw-output '.ARN' ./output/secretsmanager-create-secret.json)"
                 }
-            ],
-            "systemControls": []
+            ]
         }
     ],
-    "executionRoleArn": "arn:aws:iam::851725631136:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
     "requiresCompatibilities": [
         "FARGATE"
@@ -434,6 +497,7 @@ EOF
 ```bash
 aws ecs register-task-definition \
     --task-role-arn $(jq --raw-output '.ecsTaskRoleArn' ./output/aws-configuration.json) \
+    --execution-role-arn $(jq --raw-output '.ecsTaskRoleArn' ./output/aws-configuration.json) \
     --cli-input-json file://output/ecs-fargate-task-definition-grafana.json \
     --tags key=project,value=$(jq --raw-output '.clusterName' ./output/aws-configuration.json) \
     > ./output/ecs-register-task-definition.json
@@ -488,6 +552,8 @@ aws ecs create-service \
 ```
 
 ```
+TODO - add     --load-balancers targetGroupArn=string,containerName=string,containerPort=3000 \
+
 awsvpcConfiguration={subnets=[subnet-12344321],securityGroups=[sg-12344321],assignPublicIp=ENABLED}
 assignPublicIp=DISABLED
 --load-balancers targetGroupArn=string,loadBalancerName=string,containerName=string,containerPort=integer
@@ -538,4 +604,4 @@ The ServiceNow data source plugin allows you to query and visualize data from Se
 
 ### Related Blog Posts
 * [Medium - Deploying Grafana with AWS Fargate (using CloudFormation)](https://andepaulj.medium.com/deploying-grafana-with-aws-fargate-f6061cc5e61d)
-* [](https://github.com/aws-samples/aws-cdk-grafana/blob/main/lib/cdk-grafana-stack.ts)
+* [CDK Grafana](https://github.com/aws-samples/aws-cdk-grafana/blob/main/lib/cdk-grafana-stack.ts)
