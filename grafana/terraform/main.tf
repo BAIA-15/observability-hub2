@@ -3,14 +3,13 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.16"
+      version = "~> 4.67.0"
     }
   }
-  required_version = ">= 1.2.0"
 }
 
 provider "aws" {
-  profile = "observability-hub-admin"
+  profile = "aws-it-observability-gnp-admin-851725214198"
   region  = "ap-southeast-2"
   default_tags {
     tags = {
@@ -34,5 +33,3 @@ provider "aws" {
     }
   }
 }
-
-

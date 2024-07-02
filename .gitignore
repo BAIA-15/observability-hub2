@@ -33,3 +33,11 @@ override.tf.json
 .terraformrc
 terraform.rc
 ifconfig.me
+
+# Project terraform files 
+*.terraform.lock.hcl
+
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+*tfplan*
+*/*/tfplan
+grafana/terraform/tfplan
