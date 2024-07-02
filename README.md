@@ -90,6 +90,7 @@ terraform plan
   * https://rpm.grafana.com
 * Patching - Using AWS Systems Manager - Using Quick Setup patch policies (defined by Vache Abram)
 * Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache Abram)
+* Real values for resource tags
 
 # Blockers
 

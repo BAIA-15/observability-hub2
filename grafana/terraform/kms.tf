@@ -25,7 +25,6 @@ resource "aws_kms_alias" "grafana_kms_key_alias" {
   target_key_id = aws_kms_key.grafana_kms_key.key_id
 }
 
-
 /*
   statement {
     sid = "Allow ECS Fargate use of the key"

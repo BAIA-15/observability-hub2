@@ -67,5 +67,3 @@ resource "aws_autoscaling_group" "grafana_ec2_autoscaling_group" {
     create_before_destroy = true
   }
 }
-
-# TODO - key pair
