@@ -9,8 +9,9 @@ terraform {
 }
 
 provider "aws" {
-  profile = "aws-it-observability-gnp-admin-851725214198"
-  region  = "ap-southeast-2"
+  profile = "ncs"
+  # profile = "aws-it-observability-gnp-admin-851725214198"
+  region = "ap-southeast-2"
   default_tags {
     tags = {
       o_b_bus-own    = "FinancialOwner"

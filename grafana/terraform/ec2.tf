@@ -11,14 +11,6 @@ data "aws_subnet" "compute_subnet_2" {
   id = var.compute_subnet_2_id
 }
 
-data "aws_ami" "ec2_ami_id" {
-  most_recent = true
-  filter {
-    name   = "name"
-    values = [var.ec2_ami_name_prefix]
-  }
-}
-
 # Amazon EC2 security group
 resource "aws_security_group" "grafana_ec2_sg" {
   name        = "grafana_ec2_sg"
@@ -43,12 +35,21 @@ resource "aws_security_group_rule" "allow_internal_alb" {
 
 # Amazon EC2 launch template - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template 
 resource "aws_launch_template" "grafana_ec2_launch_template" {
-  name_prefix   = "${var.ec2_name_prefix}-"
-  image_id      = data.aws_ami.ec2_ami_id.id
+  name_prefix = "${var.ec2_name_prefix}-"
+  iam_instance_profile {
+    name = var.iam_instance_profile_name_grafana
+  }
+  image_id      = var.ec2_ami_id
   instance_type = var.ec2_instance_type
   # user_data       = file("files/install_grafana.sh")
   # key_name        = var.ec2_key_name
   vpc_security_group_ids = [aws_security_group.grafana_ec2_sg.id]
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name = "grafana_ec2"
+    }
+  }
 }
 
 # Amazon EC2 autoscaling group - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group

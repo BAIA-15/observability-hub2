@@ -22,213 +22,16 @@
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Effect": "Allow",
-            "Action": "iam:CreateServiceLinkedRole",
-            "Resource": "arn:aws:iam::*:role/aws-service-role/acm.amazonaws.com/AWSServiceRoleForCertificateManager*",
-            "Condition": {
-                "StringEquals": {
-                    "iam:AWSServiceName": "acm.amazonaws.com"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:DeleteServiceLinkedRole",
-                "iam:GetServiceLinkedRoleDeletionStatus",
-                "iam:GetRole"
-            ],
-            "Resource": "arn:aws:iam::*:role/aws-service-role/acm.amazonaws.com/AWSServiceRoleForCertificateManager*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "license-manager:ListLicenseConfigurations",
-                "license-manager:ListLicenseSpecificationsForResource"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:GetRole"
-            ],
-            "Resource": "arn:aws:iam::*:role/aws-service-role/imagebuilder.amazonaws.com/AWSServiceRoleForImageBuilder"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:GetInstanceProfile"
-            ],
-            "Resource": "arn:aws:iam::*:instance-profile/*imagebuilder*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:ListInstanceProfiles",
-                "iam:ListRoles"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "iam:PassRole",
-            "Resource": [
-                "arn:aws:iam::*:instance-profile/*imagebuilder*",
-                "arn:aws:iam::*:role/*imagebuilder*"
-            ],
-            "Condition": {
-                "StringEquals": {
-                    "iam:PassedToService": "ec2.amazonaws.com"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListAllMyBuckets",
-                "s3:GetBucketLocation"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListBucket"
-            ],
-            "Resource": "arn:aws:s3::*:*imagebuilder*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "iam:CreateServiceLinkedRole",
-            "Resource": "arn:aws:iam::*:role/aws-service-role/imagebuilder.amazonaws.com/AWSServiceRoleForImageBuilder",
-            "Condition": {
-                "StringLike": {
-                    "iam:AWSServiceName": "imagebuilder.amazonaws.com"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DescribeImages",
-                "ec2:DescribeSnapshots",
-                "ec2:DescribeVpcs",
-                "ec2:DescribeRegions",
-                "ec2:DescribeVolumes",
-                "ec2:DescribeSubnets",
-                "ec2:DescribeKeyPairs",
-                "ec2:DescribeSecurityGroups",
-                "ec2:DescribeInstanceTypeOfferings",
-                "ec2:DescribeLaunchTemplates"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:ListGroups",
-                "iam:ListRoles",
-                "iam:ListUsers"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "cloudformation:DescribeStacks",
-                "cloudformation:ListStackResources",
-                "cloudwatch:ListMetrics",
-                "cloudwatch:GetMetricData",
-                "ec2:DescribeSecurityGroups",
-                "ec2:DescribeSubnets",
-                "ec2:DescribeVpcs",
-                "iam:GetPolicy",
-                "iam:GetPolicyVersion",
-                "iam:GetRole",
-                "iam:GetRolePolicy",
-                "iam:ListAttachedRolePolicies",
-                "iam:ListRolePolicies",
-                "iam:ListRoles",
-                "lambda:*",
-                "logs:DescribeLogGroups",
-                "states:DescribeStateMachine",
-                "states:ListStateMachines",
-                "tag:GetResources",
-                "xray:GetTraceSummaries",
-                "xray:BatchGetTraces"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "iam:PassRole",
-            "Resource": "*",
-            "Condition": {
-                "StringEquals": {
-                    "iam:PassedToService": "lambda.amazonaws.com"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:DescribeLogStreams",
-                "logs:GetLogEvents",
-                "logs:FilterLogEvents"
-            ],
-            "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "autoscaling:Describe*",
-                "cloudwatch:*",
-                "logs:*",
-                "iam:GetPolicy",
-                "iam:GetPolicyVersion",
-                "iam:GetRole",
-                "oam:ListSinks"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "iam:CreateServiceLinkedRole",
-            "Resource": "arn:aws:iam::*:role/aws-service-role/events.amazonaws.com/AWSServiceRoleForCloudWatchEvents*",
-            "Condition": {
-                "StringLike": {
-                    "iam:AWSServiceName": "events.amazonaws.com"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": "iam:CreateServiceLinkedRole",
-            "Resource": "*",
-            "Condition": {
-                "StringEquals": {
-                    "iam:AWSServiceName": "elasticloadbalancing.amazonaws.com"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:*",
-            ],
-            "Resource": "*"
-        },
-        {
             "Sid": "ListAndViewAccountAccess",
             "Effect": "Allow",
             "Action": [
                 "account:List*",
-                "account:GetAccountInformation",
+                "account:Get*",
                 "aws-portal:View*",
                 "budgets:View*",
                 "iam:Get*",
                 "iam:List*",
+                "license-manager:List*"
             ],
             "Resource": "*"
         },
@@ -252,6 +55,7 @@
                 "ec2:CopySnapshot",
                 "ec2:CreateFlowLogs",
                 "ec2:CreateLaunchTemplate",
+                "ec2:CreateLaunchTemplateVersion",
                 "ec2:CreateNetworkInterface",
                 "ec2:CreateSecurityGroup",
                 "ec2:CreateSnapshot",
@@ -305,14 +109,6 @@
             }
         },
         {
-            "Sid": "DenyPurchases",
-            "Effect": "Deny",
-            "Action": [
-                "ec2:PurchaseReserved*"
-            ],
-            "Resource": "*"
-        },
-        {
             "Sid": "AllowResourceActions",
             "Effect": "Allow",
             "Action": [
@@ -326,6 +122,7 @@
                 "backup:*",
                 "ce:*",
                 "cloudformation:*",
+                "cloudshell:*",
                 "cloudtrail:*",
                 "cloudtrail-data:*",
                 "cloudwatch:*",
@@ -333,6 +130,7 @@
                 "compute-optimizer:*",
                 "config:*",
                 "cost-optimization-hub:*",
+                "devops-guru:*",
                 "dlm:*",
                 "ec2-instance-connect:*",
                 "ec2messages:*",
@@ -355,6 +153,7 @@
                 "rds:*",
                 "resource-explorer:*",
                 "s3:*",
+                "s3-object-lambda:*",
                 "scheduler:*",
                 "schemas:*",
                 "secretsmanager:*",
@@ -377,9 +176,24 @@
             "Effect": "Allow",
             "Action": "iam:PassRole",
             "Resource": [
-                "arn:aws:iam::851725214198:role/application-observability-ec2-elastic-agent",
-                "arn:aws:iam::851725214198:role/application-observability-ec2-dynatrace-agent"
+                "arn:aws:iam::851725631136:role/application-observability-*"
             ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "iam:AWSServiceName": [
+                        "autoscaling.amazonaws.com",
+                        "ec2scheduled.amazonaws.com",
+                        "elasticloadbalancing.amazonaws.com",
+                        "replication.ecr.amazonaws.com",
+                        "transitgateway.amazonaws.com"
+                    ]
+                }
+            }
         }
     ]
 }

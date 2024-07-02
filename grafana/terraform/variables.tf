@@ -26,19 +26,22 @@ variable "kms_admin_role_arn" {
 
 # get VPC id
 variable "main_vpc_id" {
-  type        = string
-  default     = "vpc-09f66367832c81626"
+  type = string
+  # default     = "vpc-09f66367832c81626"
+  default     = "vpc-03acfc82685dd7a33"
   description = "The AWS VPC id used in this deployment"
 }
 # get subnet ids
 variable "compute_subnet_1_id" {
-  type        = string
-  default     = "subnet-0956ea0317a3e43ed"
+  type = string
+  # default     = "subnet-0956ea0317a3e43ed"
+  default     = "subnet-0284b0ef91aea0ea6"
   description = "The first subnet id used in this deployment"
 }
 variable "compute_subnet_2_id" {
-  type        = string
-  default     = "subnet-0dc8294f868fec22c"
+  type = string
+  # default     = "subnet-0dc8294f868fec22c"
+  default     = "subnet-0815036e894d811e5"
   description = "The second subnet id used in this deployment"
 }
 
@@ -50,14 +53,21 @@ variable "ec2_name_prefix" {
 }
 
 # AMI name prefix - Red Hat Enterprise Linux SOE
-variable "ec2_ami_name_prefix" {
+variable "ec2_ami_id" {
   type        = string
-  default     = "RHEL8-SOE-*"
-  description = "AMI name prefix"
+  default     = "ami-086918d8178bfe266"
+  description = "AMI id"
 }
+# default     = "RHEL8-SOE-*"
 
 variable "ec2_instance_type" {
   type        = string
   default     = "t2.micro"
   description = "Amazon EC2 instance type"
+}
+
+variable "iam_instance_profile_name_grafana" {
+  type        = string
+  default     = "application-observability-ec2-grafana"
+  description = "Amazon EC2 instance profile name"
 }

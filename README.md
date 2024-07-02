@@ -88,6 +88,8 @@ terraform plan
 * Automate this Marketplace subscription acceptance for using the EC2 RHEL license or cross account share the license with AWS license manager
 * Firewall burn for grafana enterprise packages
   * https://rpm.grafana.com
+* Patching - Using AWS Systems Manager - Using Quick Setup patch policies (defined by Vache Abram)
+* Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache Abram)
 
 # Blockers
 
@@ -102,3 +104,5 @@ terraform plan
   * cloudtrail:LookupEvents
   * cloudtrail:ListEventDataStores
   * config:DescribeConfigurationRecorderStatus
+
+
