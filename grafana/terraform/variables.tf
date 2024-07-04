@@ -1,12 +1,20 @@
 
 # get the caller identity - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity
+
+# The attribute `${data.aws_caller_identity.current.account_id}` will be current account number.
 data "aws_caller_identity" "current" {}
+
+# The attribue `${data.aws_iam_account_alias.current.account_alias}` will be current account alias
+data "aws_iam_account_alias" "current" {}
+
+# The attribute `${data.aws_region.current.name}` will be current region
 data "aws_region" "current" {}
 
 # Set as [local values](https://www.terraform.io/docs/configuration/locals.html)
 locals {
-  account_id = data.aws_caller_identity.current.account_id
-  caller_arn = data.aws_caller_identity.current.arn
+  account_id    = data.aws_caller_identity.current.account_id
+  account_alias = data.aws_iam_account_alias.current.account_alias
+  region        = data.aws_region.current.name
 }
 
 # variables
@@ -22,52 +30,77 @@ variable "kms_admin_role_arn" {
   description = "The AWS role ARN used in this deployment"
 }
 
-# existing AWS resources
+# get the existing AWS resources
 
-# get VPC id
 variable "main_vpc_id" {
-  type = string
-  # default     = "vpc-09f66367832c81626"
-  default     = "vpc-03acfc82685dd7a33"
-  description = "The AWS VPC id used in this deployment"
+  type        = string
+  default     = "vpc-00000"
+  description = "AWS VPC id used in this deployment"
 }
-# get subnet ids
+
 variable "compute_subnet_1_id" {
-  type = string
-  # default     = "subnet-0956ea0317a3e43ed"
-  default     = "subnet-0284b0ef91aea0ea6"
+  type        = string
+  default     = "subnet-00000"
   description = "The first subnet id used in this deployment"
 }
+
 variable "compute_subnet_2_id" {
-  type = string
-  # default     = "subnet-0dc8294f868fec22c"
-  default     = "subnet-0815036e894d811e5"
+  type        = string
+  default     = "subnet-00000"
   description = "The second subnet id used in this deployment"
 }
 
-// stack variables
+variable "ec2_ami_id" {
+  type        = string
+  default     = "ami-00000"
+  description = "EC2 AMI id"
+}
+
+variable "aws_ec2_instance_type" {
+  type        = string
+  default     = "t2.micro"
+  description = "EC2 instance type"
+}
+
 variable "ec2_name_prefix" {
   type        = string
   default     = "grafana-enterprise"
   description = "Prefix used in EC2 resource names"
 }
 
-# AMI name prefix - Red Hat Enterprise Linux SOE
-variable "ec2_ami_id" {
-  type        = string
-  default     = "ami-086918d8178bfe266"
-  description = "AMI id"
-}
-# default     = "RHEL8-SOE-*"
-
-variable "ec2_instance_type" {
-  type        = string
-  default     = "t2.micro"
-  description = "Amazon EC2 instance type"
-}
-
-variable "iam_instance_profile_name_grafana" {
+variable "iam_instance_profile_name" {
   type        = string
   default     = "application-observability-ec2-grafana"
   description = "Amazon EC2 instance profile name"
+}
+
+variable "aws_vpc_endpoints" {
+  type = list(string)
+  default = null
+  description = "List of VPC endpoints"
+}
+
+# data sources
+
+data "aws_vpc" "main" {
+  id = var.main_vpc_id
+}
+
+data "aws_subnet" "compute_1" {
+  id = var.compute_subnet_1_id
+}
+
+data "aws_subnet" "compute_2" {
+  id = var.compute_subnet_2_id
+}
+
+data "aws_ami" "grafana" {
+  filter {
+    name   = "image-id"
+    values = [var.ec2_ami_id]
+  }
+}
+
+data "aws_ec2_instance_type" "grafana" {
+  instance_type = var.aws_ec2_instance_type
 }

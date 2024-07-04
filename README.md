@@ -43,6 +43,16 @@ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinu
 sudo yum -y install terraform
 terraform --version
 ```
+
+### Example Terraform commands to deploy AWS resources
+
+```bash
+terraform fmt
+terraform plan -out=tfplan --var-file=.\environments\ncs-851725631136.tfvars
+terraform apply tfplan
+terraform destroy --var-file=.\environments\ncs-851725631136.tfvars
+```
+
 ### Terraform Commands
 
 In your project folder, run the Terraform commands.
@@ -82,6 +92,19 @@ terraform plan
 
 * [AWS Security Hub - Bootstrap and Operationalization](https://github.com/aws-samples/aws-security-services-with-terraform/blob/master/aws-security-hub-boostrap-and-operationalization/README.md)
 * [AWS Terraform Workshop](https://github.com/aws-samples/terraform-sample-workshop/blob/main/module_1/one_file_tf/simple_nginx_stack/vars.tf)
+
+# AWS PrivateLink
+
+| Service | Interface endpoint | Description |
+| -- | -- | -- |
+| AWS Systems Manager | com.amazonaws.ap-southeast-2.ssm | The endpoint for the Systems Manager service. |
+| AWS Systems Manager | com.amazonaws.ap-southeast-2.ec2messages | Systems Manager uses this endpoint to make calls from SSM Agent to the Systems Manager service. |
+| AWS Systems Manager | com.amazonaws.ap-southeast-2.ssmmessages | For connecting to your instances through a secure data channel using Session Manager. |
+|Amazon EC2 | com.amazonaws.ap-southeast-2.ec2 | The endpoint for the EC2 service. |
+| AWS Key Management Service (AWS KMS) | com.amazonaws.ap-southeast-2.kms | To use AWS KMS encryption for Session Manager or Parameter Store parameters. |
+| Amazon CloudWatch Logs | com.amazonaws.ap-southeast-2.logs | To use Amazon CloudWatch Logs (CloudWatch Logs) for Session Manager, Run Command, or SSM Agent logs. |
+| Amazon S3 | com.amazonaws.ap-southeast-2.s3 | Systems Manager uses this endpoint to update SSM Agent and to perform patching operations. |
+
 
 # TODO List
 

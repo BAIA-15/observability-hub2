@@ -22,29 +22,7 @@ In this solution, Grafana Enterpise is privately hosted using a Docker container
 
 ## Prerequisites
 
-### Git
-* Install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
- 
-### AWS
-* An AWS account
-* [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-* AWS CLI [configured](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config)
-* [Terraform](#)
-
-## Download and Configure
-
-### Clone Repo
-```bash
-git clone https://github.com/aws-samples/aws-cdk-grafana
-```
-
-### Install node modules
-```bash 
-cd aws-cdk-grafana
-npm install
-```
-
-## AWS requirements
+### AWS requirements
 Grafana Enterprise requires these AWS resources:
 * Amazon CloudWatch
 * EFS (Elastic File System)
@@ -53,7 +31,7 @@ Grafana Enterprise requires these AWS resources:
 * AWS Elastic Container Registry
 * AWS IAM role - ECS task role
 
-## Hardware recommendations
+### Hardware recommendations
 Grafana requires the minimum system resources:
 * Minimum recommended memory: 512 MB
 * Minimum recommended CPU: 1
@@ -63,9 +41,8 @@ Some features might require more memory or CPUs, including:
 * Alerting
 * Data source proxy
 
-## PrivateLink Endpoints
+### PrivateLink Endpoints
 PrivateLink endpoints can be added using the following command. This will incur additional cost for the endpoints, but will prevent Amazon CloudWatch, EFS (Elastic File System) and Secrets Manager traffic from traversing the public internet.
-
 
 ## AWS IAM - ECS Task Role
 
@@ -559,15 +536,12 @@ assignPublicIp=DISABLED
 --load-balancers targetGroupArn=string,loadBalancerName=string,containerName=string,containerPort=integer
 ```
 
-
 ## Configure Grafana Enterprise
 
 ### Plugins and data
 
 #### ServiceNow data source for Grafana
 The ServiceNow data source plugin allows you to query and visualize data from ServiceNow within Grafana.
-
-
 
 ## Container details
 | Container registry | Amazon ECR |

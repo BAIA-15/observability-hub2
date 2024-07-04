@@ -4,44 +4,15 @@
 ## Attached AWS managed policies
 
 * AmazonKinesisFirehoseFullAccess
-* AmazonS3ReadOnlyAccess
+* AmazonS3FullAccess
 * AmazonSQSFullAccess
 * AmazonSSMManagedInstanceCore
 * CloudWatchReadOnlyAccess
 
 ## Attached custom policies
 
-* AwsEc2ElasticAgentPolicy
+None
 
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AllResources",
-            "Effect": "Allow",
-            "Action": [
-                "ce:GetCostAndUsage",
-                "iam:ListAccountAliases",
-                "cloudwatch:ListMetrics",
-                "cloudwatch:GetMetricData",
-                "ec2:DescribeInstances",
-                "ec2:DescribeRegions",
-                "logs:DescribeLogGroups",
-                "organizations:ListAccounts",
-                "rds:DescribeDBInstances",
-                "rds:ListTagsForResource",
-                "sns:ListTopics",
-                "tag:GetResources",
-                "sqs:ListQueues"
-            ],
-            "Resource": [
-                "*"
-            ]
-        }
-    ]
-}
-```
 ## Permissions boundary
 
 None

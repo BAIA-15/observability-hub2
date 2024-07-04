@@ -14,15 +14,15 @@ data "aws_iam_policy_document" "kms_key_policy_grafana" {
   }
 }
 
-resource "aws_kms_key" "grafana_kms_key" {
+resource "aws_kms_key" "grafana" {
   description         = "Symmetric encryption KMS key for Grafana"
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms_key_policy_grafana.json
 }
 
-resource "aws_kms_alias" "grafana_kms_key_alias" {
+resource "aws_kms_alias" "grafana" {
   name          = "alias/grafana_kms_key_alias"
-  target_key_id = aws_kms_key.grafana_kms_key.key_id
+  target_key_id = aws_kms_key.grafana.key_id
 }
 
 /*
