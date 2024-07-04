@@ -75,8 +75,8 @@ variable "iam_instance_profile_name" {
 }
 
 variable "aws_vpc_endpoints" {
-  type = list(string)
-  default = null
+  type        = list(string)
+  default     = null
   description = "List of VPC endpoints"
 }
 

@@ -169,24 +169,19 @@
             "Effect": "Allow",
             "Action": "iam:PassRole",
             "Resource": [
-                "arn:aws:iam::851725631136:role/application-observability-*"
+                "arn:aws:iam::*:role/application-observability-*"
             ]
         },
         {
             "Effect": "Allow",
-            "Action": "iam:CreateServiceLinkedRole",
-            "Resource": "*",
-            "Condition": {
-                "StringEquals": {
-                    "iam:AWSServiceName": [
-                        "autoscaling.amazonaws.com",
-                        "ec2scheduled.amazonaws.com",
-                        "elasticloadbalancing.amazonaws.com",
-                        "replication.ecr.amazonaws.com",
-                        "transitgateway.amazonaws.com"
-                    ]
-                }
-            }
+            "Action": [
+                "iam:AttachRolePolicy",
+                "iam:CreateServiceLinkedRole",
+                "iam:DeleteServiceLinkedRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::*:role/aws-service-role/*"
+            ]
         }
     ]
 }
