@@ -18,6 +18,44 @@ locals {
 }
 
 # variables
+variable "aws_cli_profile" {
+  type        = string
+  default     = "default"
+  description = "The AWS CLI profile used in this deployment"
+}
+
+variable "aws_region" {
+  type        = string
+  default     = "ap-southeast-2"
+  description = "The AWS region used in this deployment"
+  nullable    = false
+}
+
+variable "tags" {
+  type = object({
+    o_b_bus-own    = string
+    o_s_sra        = string
+    o_s_app-class  = string
+    o_t_app-role   = string
+    o_t_env        = string
+    o_t_app-plat   = string
+    o_t_app        = string
+    o_t_tech-own   = string
+    o_b_cc         = string
+    o_b_pri-own    = string
+    o_b_project    = string
+    o_b_bu         = string
+    o_s_data-class = string
+    o_t_app-own    = string
+    o_t_dep-mthd   = string
+    o_a_avail      = string
+    o_t_lifecycle  = string
+  })
+  default     = null
+  description = "Default resource tags"
+}
+
+# variables
 variable "cluster_name" {
   type        = string
   default     = "observability-hub-grafana"
@@ -104,3 +142,5 @@ data "aws_ami" "grafana" {
 data "aws_ec2_instance_type" "grafana" {
   instance_type = var.aws_ec2_instance_type
 }
+
+data "aws_default_tags" "current" {}

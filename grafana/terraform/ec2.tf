@@ -10,12 +10,12 @@ resource "aws_security_group" "grafana" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "ssh_ec2_instance_connect" {
-  description = "SSH - EC2 Instance Connect"
+  description       = "SSH - EC2 Instance Connect"
   security_group_id = aws_security_group.grafana.id
-  cidr_ipv4   = "13.239.158.0/29"
-  from_port   = 22
-  ip_protocol = "tcp"
-  to_port     = 22
+  cidr_ipv4         = "13.239.158.0/29"
+  from_port         = 22
+  ip_protocol       = "tcp"
+  to_port           = 22
   tags = {
     Name = "${var.ec2_name_prefix}"
   }
@@ -34,28 +34,41 @@ resource "aws_launch_template" "grafana" {
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name = "${var.ec2_name_prefix}"
+      Name    = "${var.ec2_name_prefix}"
+      Created = timestamp()
     }
   }
   tag_specifications {
     resource_type = "volume"
-    tags = {
-      Name = "${var.ec2_name_prefix}"
-    }
+    tags = merge(
+      var.tags,
+      {
+        Name = "${var.ec2_name_prefix}"
+        Created = timestamp()
+      }
+    )
   }
 }
 
 # Amazon EC2 autoscaling group - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group
 resource "aws_autoscaling_group" "grafana" {
-  name             = "grafana_ec2_autoscaling_group"
-  desired_capacity = 1
-  min_size         = 1
-  max_size         = 1
+  name                = "grafana_ec2_autoscaling_group"
+  desired_capacity    = 1
+  min_size            = 1
+  max_size            = 1
+  vpc_zone_identifier = [data.aws_subnet.compute_1.id, data.aws_subnet.compute_2.id]
   launch_template {
     id      = aws_launch_template.grafana.id
     version = "$Latest"
   }
-  vpc_zone_identifier = [data.aws_subnet.compute_1.id, data.aws_subnet.compute_2.id]
+  dynamic "tag" {
+    for_each = data.aws_default_tags.current.tags
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = true
+    }
+  }
   lifecycle {
     create_before_destroy = true
   }

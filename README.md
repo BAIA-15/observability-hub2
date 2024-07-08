@@ -61,6 +61,7 @@ terraform destroy --var-file=.\environments\ncs-851725631136.tfvars
 terraform fmt
 terraform plan -out=tfplan --var-file=.\environments\gnp-851725214198.tfvars
 terraform apply tfplan
+terraform apply -replace tfplan
 terraform destroy --var-file=.\environments\gnp-851725214198.tfvars
 ```
 
@@ -126,6 +127,7 @@ terraform plan
 * Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache Abram)
 * Real values for resource tags
 * Remove public IP from grafana EC2
+* Fix default tags not picking up - https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0
 
 # Blockers
 

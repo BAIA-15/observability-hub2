@@ -1,5 +1,11 @@
 
-# Role - application-observability-ec2-elastic-agent
+# Role - aws-it-observability-gnp-admin
+
+```bash
+aws sts assume-role \
+    --role-arn arn:aws:iam::851725631136:role/aws-it-observability-gnp-admin \
+    --role-session-name aws-it-observability-gnp-admin 
+```
 
 ## Attached AWS managed policies
 
@@ -169,15 +175,16 @@
             "Effect": "Allow",
             "Action": "iam:PassRole",
             "Resource": [
-                "arn:aws:iam::*:role/application-observability-*"
+                "arn:aws:iam::*:role/application-observability-*",
+                "arn:aws:iam::*:role/service-role/*"
             ]
         },
         {
             "Effect": "Allow",
             "Action": [
-                "iam:AttachRolePolicy",
                 "iam:CreateServiceLinkedRole",
-                "iam:DeleteServiceLinkedRole"
+                "iam:DeleteServiceLinkedRole",
+                "iam:GetServiceLinkedRoleDeletionStatus"
             ],
             "Resource": [
                 "arn:aws:iam::*:role/aws-service-role/*"
