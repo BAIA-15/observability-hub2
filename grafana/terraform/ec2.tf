@@ -1,6 +1,6 @@
 
 # Amazon EC2 security group
-resource "aws_security_group" "grafana" {
+resource "aws_security_group" "grafana_ec2" {
   name        = "grafana_ec2_sg"
   description = "Grafana EC2 security group - Managed by Terraform"
   vpc_id      = data.aws_vpc.main.id
@@ -13,7 +13,7 @@ resource "aws_security_group" "grafana" {
 # TODO - remove below in production - use SSM only instead
 resource "aws_vpc_security_group_ingress_rule" "ssh_ec2_instance_connect" {
   description       = "SSH - EC2 Instance Connect"
-  security_group_id = aws_security_group.grafana.id
+  security_group_id = aws_security_group.grafana_ec2.id
   cidr_ipv4         = "13.239.158.0/29"
   from_port         = 22
   ip_protocol       = "tcp"
@@ -26,7 +26,7 @@ resource "aws_vpc_security_group_ingress_rule" "ssh_ec2_instance_connect" {
 # Resource: aws_vpc_security_group_egress_rule - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule
 resource "aws_vpc_security_group_egress_rule" "https_egress" {
   description       = "SSM required HTTPS 443 egress"
-  security_group_id = aws_security_group.grafana.id
+  security_group_id = aws_security_group.grafana_ec2.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 443
   ip_protocol       = "tcp"
@@ -47,7 +47,7 @@ resource "aws_launch_template" "grafana" {
     http_tokens            = "required"
     instance_metadata_tags = "enabled"
   }
-  vpc_security_group_ids = [aws_security_group.grafana.id]
+  vpc_security_group_ids = [aws_security_group.grafana_ec2.id]
   tag_specifications {
     resource_type = "instance"
     tags = {

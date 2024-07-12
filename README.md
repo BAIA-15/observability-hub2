@@ -134,8 +134,11 @@ Default Host Management Configuration allows Systems Manager to manage your Amaz
 * Patching - Using AWS Systems Manager - Using Quick Setup patch policies (defined by Vache Abram)
 * Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache Abram)
 * Real values for resource tags
-* Remove public IP from grafana EC2
-* Fix default tags not picking up - https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0
+* Remove public IP from Grafana EC2
+* Encrypt Grafana EFS
+* ~~[Fix default tags not picking up](https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0)~~
+
+
 
 # Blockers
 

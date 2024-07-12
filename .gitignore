@@ -41,3 +41,4 @@ ifconfig.me
 *tfplan*
 */*/tfplan
 grafana/terraform/tfplan
+/aws

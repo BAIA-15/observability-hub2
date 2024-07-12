@@ -135,6 +135,7 @@ aws sts assume-role \
                 "ec2messages:*",
                 "ecr:*",
                 "ecs:*",
+                "elasticfilesystem:*",
                 "elasticloadbalancing:*",
                 "events:*",
                 "firehose:*",
@@ -196,3 +197,7 @@ aws sts assume-role \
 ## Permissions boundary
 
 None
+
+## Service Linked Roles Required
+
+elasticfilesystem.amazonaws.com
