@@ -30,4 +30,7 @@ terraform state list
 terraform destroy
 ```
 
-
+## Elastic SaaS Account Team
+* Sam Hayward - manages OCS partnership
+* Bradley Wu-Byrne - manages NCS partnership
+* Sam Harley - ex-Databricks

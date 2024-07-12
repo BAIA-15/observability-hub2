@@ -43,7 +43,7 @@ resource "aws_launch_template" "grafana" {
     tags = merge(
       var.tags,
       {
-        Name = "${var.ec2_name_prefix}"
+        Name    = "${var.ec2_name_prefix}"
         Created = timestamp()
       }
     )
