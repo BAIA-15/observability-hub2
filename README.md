@@ -26,6 +26,8 @@ This repository includes the [Terraform](https://www.terraform.io/) to provision
 `-- dynatrace
 `-- elastic
 `-- grafana
+`  -- terraform
+`-- images
 ```
 
 ## Terraform on AWS
@@ -50,19 +52,19 @@ terraform --version
 
 ```bash
 terraform fmt
-terraform plan -out=tfplan --var-file=.\environments\ncs-851725631136.tfvars
+terraform plan -out=tfplan --var-file=./environments/ncs-851725631136.tfvars
 terraform apply tfplan
-terraform destroy --var-file=.\environments\ncs-851725631136.tfvars
+terraform destroy --var-file=./environments/ncs-851725631136.tfvars
 ```
 
 #### GNP Environment
 
 ```bash
 terraform fmt
-terraform plan -out=tfplan --var-file=.\environments\gnp-851725214198.tfvars
+terraform plan -out=tfplan --var-file=./environments/gnp-851725214198.tfvars
 terraform apply tfplan
 terraform apply -replace tfplan
-terraform destroy --var-file=.\environments\gnp-851725214198.tfvars
+terraform destroy --var-file=./environments/gnp-851725214198.tfvars
 ```
 
 ### Terraform Commands
