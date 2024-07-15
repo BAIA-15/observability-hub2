@@ -181,6 +181,8 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 
 # TODO List
 
+## Development Tasks
+
 * Automate this Marketplace subscription acceptance for using the EC2 RHEL license or cross account share the license with AWS license manager
 * Firewall burn for grafana enterprise packages
   * https://rpm.grafana.com
@@ -193,11 +195,7 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 * ~~Encrypt Grafana EFS~~
 * ~~[Fix default tags not picking up](https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0)~~
 
-# Questions
-
-* Are there any requirements for [Controlling Access to Services with VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-access.html)?
-
-# Project Timeline
+## Project Tasks
 
 * Dynatrace agents on-premise networking to Dynatrace SaaS
   * optus.com.au ActiveGate on on-premise needs to point to new cluster on Dynatrace SaaS
@@ -210,8 +208,12 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 * ServiceNow integration - SaaS instances to connect
 * Production readiness
 
+# Questions
+
+* Are there any requirements for [Controlling Access to Services with VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-access.html)?
+
 # Blockers
- 
+
 ## AWS IAM Blockers
 * IAM permissions required to accept the CIS Amazon Linux 2 Kernel 4.14 Benchmark - Level 1 subscription 
   * aws-marketplace:ViewSubscriptions
