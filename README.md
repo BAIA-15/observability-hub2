@@ -171,6 +171,14 @@ Default Host Management Configuration allows Systems Manager to manage your Amaz
 
 [Configure instance permissions required for Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html)
 
+# Patching
+
+Using AWS Systems Manager - Using Quick Setup patch policies (defined by Vache Abram)
+
+# Backup
+
+Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache Abram)
+
 # TODO List
 
 * Automate this Marketplace subscription acceptance for using the EC2 RHEL license or cross account share the license with AWS license manager
@@ -181,9 +189,16 @@ Default Host Management Configuration allows Systems Manager to manage your Amaz
 * Real values for resource tags
 * Remove public IP from Grafana EC2
 * Mount Grafana EFS to EC2
+* Use Secrets Manager for Grafana admin
 * ~~Encrypt Grafana EFS~~
 * ~~[Fix default tags not picking up](https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0)~~
-* Any requirements for [Controlling Access to Services with VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-access.html)
+
+# Questions
+
+* Are there any requirements for [Controlling Access to Services with VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-access.html)?
+
+# Project Timeline
+
 * Dynatrace agents on-premise networking to Dynatrace SaaS
   * optus.com.au ActiveGate on on-premise needs to point to new cluster on Dynatrace SaaS
 * Dynatrace SSO tenants
