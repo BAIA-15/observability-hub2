@@ -23,7 +23,7 @@ sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 EOF
 
 # install grafana enterprise
-sudo dnf install grafana-enterprise
+sudo dnf install grafana-enterprise -y
 
 ## https://grafana.com/docs/grafana/latest/setup-grafana/start-restart-grafana/
 
@@ -34,7 +34,7 @@ sudo systemctl daemon-reload
 sudo systemctl start grafana-server
 
 # verify grafana server is running
-sudo systemctl status grafana-server
+sudo systemctl status grafana-server -l --no-pager
 
 # load grafana on EC2 boot
 sudo systemctl enable grafana-server.service

@@ -119,6 +119,7 @@ terraform plan
 | Amazon CloudWatch Logs | com.amazonaws.ap-southeast-2.logs | To use Amazon CloudWatch Logs (CloudWatch Logs) for Session Manager, Run Command, or SSM Agent logs. |
 | Amazon Elastic Filesystem (EFS) | com.amazonaws.ap-southeast-2.monitoring | To use EFS for persistant storage across EC2 instances. |
 | AWS Secrets Manager | com.amazonaws.ap-southeast-2.secretsmanager | To use Secrets Manager for creating and reading secrets. |
+| Amazon Simple Notification Service | com.amazonaws.ap-southeast-2.sns | To use SNS for publishing and subscribing to event notifications. |
 | Amazon S3 | com.amazonaws.ap-southeast-2.s3 | Systems Manager uses this endpoint to update SSM Agent and to perform patching operations. |
 
 ## Testing VPC Endpoints
@@ -158,6 +159,12 @@ aws logs put-log-events --log-group-name LogGroupName --log-stream-name LogStrea
 }
 ```
 
+# Elastic File System
+
+You must configure the following rules in the security groups:
+* The security groups that you associate with a mount target must allow inbound access for the TCP protocol on the NFS port from all EC2 instances on which you want to mount the file system.
+* Each EC2 instance that mounts the file system must have a security group that allows outbound access to the mount target on the NFS port.
+
 # AWS Systems Manager
 
 Default Host Management Configuration allows Systems Manager to manage your Amazon EC2 instances automatically. After you've turned on this setting, all instances using Instance Metadata Service Version 2 (IMDSv2) in the AWS Region and AWS account with SSM Agent version 3.2.582.0 or later installed automatically become managed instances.
@@ -177,9 +184,19 @@ Default Host Management Configuration allows Systems Manager to manage your Amaz
 * ~~Encrypt Grafana EFS~~
 * ~~[Fix default tags not picking up](https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0)~~
 * Any requirements for [Controlling Access to Services with VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-access.html)
+* Dynatrace agents on-premise networking to Dynatrace SaaS
+  * optus.com.au ActiveGate on on-premise needs to point to new cluster on Dynatrace SaaS
+* Dynatrace SSO tenants
+  1. Current GNP tenant
+  2. Current Production (PRD) tenant
+  3. PMX GNP (will merge to Non-production in Jun-25)
+  4. PMX Production (will merge to Production in Jun-25)
+* Renaissance/Tel will test Elastic, OTEL
+* ServiceNow integration - SaaS instances to connect
+* Production readiness
 
 # Blockers
-
+ 
 ## AWS IAM Blockers
 * IAM permissions required to accept the CIS Amazon Linux 2 Kernel 4.14 Benchmark - Level 1 subscription 
   * aws-marketplace:ViewSubscriptions

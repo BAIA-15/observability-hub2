@@ -47,6 +47,15 @@ resource "aws_launch_template" "grafana" {
     http_tokens            = "required"
     instance_metadata_tags = "enabled"
   }
+  monitoring {
+    enabled = true
+  }
+  update_default_version = true
+  user_data = base64encode(
+    file(
+      "${path.module}/files/install_grafana.sh"
+    )
+  )
   vpc_security_group_ids = [aws_security_group.grafana_ec2.id]
   tag_specifications {
     resource_type = "instance"
@@ -89,4 +98,20 @@ resource "aws_autoscaling_group" "grafana" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+# Resource: aws_autoscaling_notification - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_notification
+# Amazon SNS notification options for Amazon EC2 Auto Scaling - https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-sns-notifications.html
+resource "aws_autoscaling_notification" "example_notifications" {
+  group_names = [
+    aws_autoscaling_group.grafana.name
+  ]
+  notifications = [
+    "autoscaling:EC2_INSTANCE_LAUNCH",
+    "autoscaling:EC2_INSTANCE_TERMINATE",
+    "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+    "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
+    "autoscaling:TEST_NOTIFICATION"
+  ]
+  topic_arn = aws_sns_topic.grafana.arn
 }
