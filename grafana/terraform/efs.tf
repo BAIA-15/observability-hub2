@@ -11,6 +11,7 @@ resource "aws_security_group" "grafana_efs" {
 
 # Resource: aws_efs_file_system - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/efs_file_system
 resource "aws_efs_file_system" "grafana" {
+  encrypted = true
   tags = {
     Name = "${var.ec2_name_prefix}"
   }

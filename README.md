@@ -117,14 +117,52 @@ terraform plan
 |Amazon EC2 | com.amazonaws.ap-southeast-2.ec2 | The endpoint for the EC2 service. |
 | AWS Key Management Service (AWS KMS) | com.amazonaws.ap-southeast-2.kms | To use AWS KMS encryption for Session Manager or Parameter Store parameters. |
 | Amazon CloudWatch Logs | com.amazonaws.ap-southeast-2.logs | To use Amazon CloudWatch Logs (CloudWatch Logs) for Session Manager, Run Command, or SSM Agent logs. |
+| Amazon Elastic Filesystem (EFS) | com.amazonaws.ap-southeast-2.monitoring | To use EFS for persistant storage across EC2 instances. |
+| AWS Secrets Manager | com.amazonaws.ap-southeast-2.secretsmanager | To use Secrets Manager for creating and reading secrets. |
 | Amazon S3 | com.amazonaws.ap-southeast-2.s3 | Systems Manager uses this endpoint to update SSM Agent and to perform patching operations. |
+
+## Testing VPC Endpoints
+
+1. Connect to an Amazon EC2 instance that resides in your VPC.
+2. Create a JSON file with a log event. The timestamp must be specified as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
+```json
+[
+  {
+    "timestamp": 1533854071310,
+    "message": "VPC Connection Test"
+  }
+]
+```
+3. Use the put-log-events command to create the log entry. If the response to the command includes nextSequenceToken, the command has succeeded and your VPC endpoint is working.
+```bash
+aws logs put-log-events --log-group-name LogGroupName --log-stream-name LogStreamName --log-events file://JSONFileName
+```
+
+## Controlling access to VPC endpoints
+
+### Amazon Cloudwatch
+
+```
+{
+  "Statement": [
+    {
+      "Sid": "PutOnly",
+      "Principal": "*",
+      "Action": [
+        "cloudwatch:PutMetricData"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+```
 
 # AWS Systems Manager
 
 Default Host Management Configuration allows Systems Manager to manage your Amazon EC2 instances automatically. After you've turned on this setting, all instances using Instance Metadata Service Version 2 (IMDSv2) in the AWS Region and AWS account with SSM Agent version 3.2.582.0 or later installed automatically become managed instances.
 
 [Configure instance permissions required for Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html)
-
 
 # TODO List
 
@@ -135,10 +173,10 @@ Default Host Management Configuration allows Systems Manager to manage your Amaz
 * Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache Abram)
 * Real values for resource tags
 * Remove public IP from Grafana EC2
-* Encrypt Grafana EFS
+* Mount Grafana EFS to EC2
+* ~~Encrypt Grafana EFS~~
 * ~~[Fix default tags not picking up](https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0)~~
-
-
+* Any requirements for [Controlling Access to Services with VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-access.html)
 
 # Blockers
 
