@@ -34,3 +34,18 @@ terraform destroy
 * Sam Hayward - manages OCS partnership
 * Bradley Wu-Byrne - manages NCS partnership
 * Sam Harley - ex-Databricks
+
+## Meeting 2024-07-16 - Elastic account team
+* Attendees
+    * Optus: Michel, Oskar Gaboda
+    * Elastic: Sam, Sam
+    * NCS: Jacob
+* Elastic needs integration with ServiceNow, emails, PagerDuty, SSO
+* SSO needs 2FA
+* Todo - Mail server for Elastic SaaS to connect to Optus mail server
+* Elastic has best practice configuration guide
+* Elastic ECU pricing - calculated daily
+    * Let Elastic know of any large scale events
+* Playbooks for production - backup
+* Enterprise discount plan
+

@@ -102,7 +102,7 @@ variable "aws_ec2_instance_type" {
 
 variable "ec2_name_prefix" {
   type        = string
-  default     = "grafana-enterprise"
+  default     = "grafana"
   description = "Prefix used in EC2 resource names"
 }
 
@@ -110,6 +110,12 @@ variable "iam_instance_profile_name" {
   type        = string
   default     = "application-observability-ec2-grafana"
   description = "Amazon EC2 instance profile name"
+}
+
+variable "iam_role_vpc_flow_logs" {
+  type        = string
+  default     = "application-observability-vpc-flow-logs"
+  description = "IAM role name for VPC flow logs to write to Amazon CloudWatch"
 }
 
 variable "aws_vpc_endpoints" {

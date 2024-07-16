@@ -192,11 +192,15 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 * Remove public IP from Grafana EC2
 * Mount Grafana EFS to EC2
 * Use Secrets Manager for Grafana admin
+* Change subnets reference to use a module (module.vpc.public_subnets)
+* Change vpc to use a module (module.vpc.vpc_id)
+* Review names of resources with "${var.ec2_name_prefix}"
 * ~~Encrypt Grafana EFS~~
 * ~~[Fix default tags not picking up](https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0)~~
 
 ## Project Tasks
 
+* How will users will login to Grafana over a private ip?
 * Dynatrace agents on-premise networking to Dynatrace SaaS
   * optus.com.au ActiveGate on on-premise needs to point to new cluster on Dynatrace SaaS
 * Dynatrace SSO tenants
@@ -207,6 +211,7 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 * Renaissance/Tel will test Elastic, OTEL
 * ServiceNow integration - SaaS instances to connect
 * Production readiness
+* elastic users login in to on-permise and SaaS - should be seamless
 
 # Questions
 

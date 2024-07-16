@@ -2,12 +2,24 @@
 
 ## https://grafana.com/docs/grafana/latest/setup-grafana/installation/redhat-rhel-fedora/
 
+# sudo
+sudo -s
+
 # update all installed packages
-sudo yum update -y
+yum update -v -y
+
+# set environmental variables
+export GF_SECURITY_ADMIN_PASSWORD="taxi"
+# echo $GF_SECURITY_ADMIN_PASSWORD
+
+# stop and uninstall grafana
+# systemctl stop grafana-server
+# dnf remove grafana-enterprise
+# rm -i /etc/yum.repos.d/grafana.repo -y
 
 # import the GPG key
 wget -q -O gpg.key https://rpm.grafana.com/gpg.key
-sudo rpm --import gpg.key
+rpm --import gpg.key
 
 # add a new yum respository to download grafana
 cat >> /etc/yum.repos.d/grafana.repo <<EOF
@@ -23,18 +35,18 @@ sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 EOF
 
 # install grafana enterprise
-sudo dnf install grafana-enterprise -y
+dnf install grafana-enterprise -v -y
 
 ## https://grafana.com/docs/grafana/latest/setup-grafana/start-restart-grafana/
 
 # reload systemd to load new settings
-sudo systemctl daemon-reload
+systemctl daemon-reload
 
 # start the grafana server
-sudo systemctl start grafana-server
+systemctl start grafana-server
 
 # verify grafana server is running
-sudo systemctl status grafana-server -l --no-pager
+systemctl status grafana-server -l --no-pager
 
 # load grafana on EC2 boot
-sudo systemctl enable grafana-server.service
+systemctl enable grafana-server.service

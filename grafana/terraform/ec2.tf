@@ -1,11 +1,11 @@
 
 # Amazon EC2 security group
 resource "aws_security_group" "grafana_ec2" {
-  name        = "grafana_ec2_sg"
-  description = "Grafana EC2 security group - Managed by Terraform"
+  name        = "${var.ec2_name_prefix}_ec2_sg"
+  description = "${var.ec2_name_prefix} EC2 security group - Managed by Terraform"
   vpc_id      = data.aws_vpc.main.id
   tags = {
-    Name = "${var.ec2_name_prefix}"
+    Name = "${var.ec2_name_prefix}_ec2_sg"
   }
 }
 
@@ -19,7 +19,18 @@ resource "aws_vpc_security_group_ingress_rule" "ssh_ec2_instance_connect" {
   ip_protocol       = "tcp"
   to_port           = 22
   tags = {
-    Name = "${var.ec2_name_prefix}"
+    Name = "${var.ec2_name_prefix}_ssh_ec2_instance_connect"
+  }
+}
+resource "aws_vpc_security_group_ingress_rule" "ec2_to_alb" {
+  description                  = "ALB ingress"
+  security_group_id            = aws_security_group.grafana_ec2.id
+  referenced_security_group_id = aws_security_group.grafana_alb.id
+  from_port                    = 3000
+  ip_protocol                  = "tcp"
+  to_port                      = 3000
+  tags = {
+    Name = "${var.ec2_name_prefix}_ec2_to_alb"
   }
 }
 
@@ -31,17 +42,29 @@ resource "aws_vpc_security_group_egress_rule" "https_egress" {
   from_port         = 443
   ip_protocol       = "tcp"
   to_port           = 443
+  tags = {
+    Name = "${var.ec2_name_prefix}_https_egress"
+  }
+}
+resource "aws_vpc_security_group_egress_rule" "all_traffic_egress" {
+  description       = "All traffic egress"
+  security_group_id = aws_security_group.grafana_ec2.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = -1
+  tags = {
+    Name = "${var.ec2_name_prefix}_all_traffic_egress"
+  }
 }
 
 # Amazon EC2 launch template - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template 
 resource "aws_launch_template" "grafana" {
-  name_prefix = "${var.ec2_name_prefix}-"
+  name        = var.ec2_name_prefix
+  description = var.ec2_name_prefix
   iam_instance_profile {
     name = var.iam_instance_profile_name
   }
   image_id      = data.aws_ami.grafana.id
   instance_type = data.aws_ec2_instance_type.grafana.id
-  # user_data       = file("files/install_grafana.sh")
   metadata_options {
     http_endpoint          = "enabled"
     http_tokens            = "required"
@@ -53,7 +76,7 @@ resource "aws_launch_template" "grafana" {
   update_default_version = true
   user_data = base64encode(
     file(
-      "${path.module}/files/install_grafana.sh"
+      "${path.module}/files/install_grafana_ubuntu.sh"
     )
   )
   vpc_security_group_ids = [aws_security_group.grafana_ec2.id]

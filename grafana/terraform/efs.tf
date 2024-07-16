@@ -1,11 +1,11 @@
 
 # Amazon EC2 security group
 resource "aws_security_group" "grafana_efs" {
-  name        = "grafana_efs_sg"
-  description = "Grafana EFS security group - Managed by Terraform"
+  name        = "${var.ec2_name_prefix}_efs_sg"
+  description = "${var.ec2_name_prefix} EFS security group - Managed by Terraform"
   vpc_id      = data.aws_vpc.main.id
   tags = {
-    Name = "${var.ec2_name_prefix}"
+    Name = "${var.ec2_name_prefix}_efs_sg"
   }
 }
 
