@@ -30,6 +30,17 @@ This repository includes the [Terraform](https://www.terraform.io/) to provision
 `-- images
 ```
 
+
+## WSL
+
+In a Windows command prompt (cmd)
+
+```bash
+wsl
+cd ~/github/observability-hub/
+code .
+```
+
 ## Terraform on AWS
 
 ### Installing Terraform with AWS CloudShell
@@ -198,6 +209,22 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 * ~~Encrypt Grafana EFS~~
 * ~~[Fix default tags not picking up](https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0)~~
 
+# SSO
+
+* OU Sync - AWS to Azure
+* IdP initiated SAML - Azure AD
+  * Need to domain join box - if 
+  * SAML if not needed
+
+* private DNS, go via zcsaler, setup internal DNS
+* ACM+ALB+route53 - https, private facing
+  * Manesh - one DNS record to authenicate certicate, CENSE request, GNP domain
+  * Dominic - created DNS solution, need to send to Manesh
+
+* email - raise internally with office365, SES, service Now (enterprise)
+  * need to/from address
+
+
 ## Project Tasks
 
 * How will users will login to Grafana over a private ip?
@@ -212,6 +239,49 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 * ServiceNow integration - SaaS instances to connect
 * Production readiness
 * elastic users login in to on-permise and SaaS - should be seamless
+
+* Testing in Obserability Hub accounts
+  * IAM permissions
+  * Networking
+  * Firewall
+  * Alerting
+
+# Outstanding Optus tasks
+* SSO access to Grafana
+* SSO access to Dynatrace SaaS
+* SSO access to Elastic SaaS
+* Private access to Grafana web application
+* Email access for Elastic SaaS
+
+# What is needed to go to production?
+* How to deploy in production? Automatic or manual deployments
+* IAM scoping
+* Testing, testing, testing
+  * Networking
+  * Performance
+
+## TODO
+* ECS or EC2 - hardend images, Linux2 and RHEL
+* AMI - Milind knows how to build AMIs
+  * Needs to be part of a scan process - Cyber
+
+1. Technical aspect - AWS account, change approvals, additional step (change approval board - CAB)
+* Day 2 support - Ross
+* Todo - kick off SRA process - scan the environment
+* SRB - TODO - ask Oscar where this is?
+* ARB - is this needed - one month
+* Test plans, monitoring by design - 
+* Service Now - requests numbers
+* Forward proxy going through this now with Micahel Le Page - SIEM certifate, 2 months+
+* Deployment via an admin user - terraform
+* Change processes - Michel and Oskar - different team to team
+* Nexus repository or internet - cyber process - Optus confluence
+  * Firewall burn - change Michel Williams / Michel + Oskar
+
+2. NCS modernization
+* September to Optus
+* 
+
 
 # Questions
 
