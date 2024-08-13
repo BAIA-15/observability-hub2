@@ -243,7 +243,6 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 
 
 ## Project Tasks
-
 * How will users will login to Grafana over a private ip?
 * Dynatrace agents on-premise networking to Dynatrace SaaS
   * optus.com.au ActiveGate on on-premise needs to point to new cluster on Dynatrace SaaS
@@ -256,6 +255,7 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 * ServiceNow integration - SaaS instances to connect
 * Production readiness
 * elastic users login in to on-permise and SaaS - should be seamless
+* Integrate PMX 4 GNP accounts - will use Elastic for logs and Dynatrace for metrics
 
 * Testing in Obserability Hub accounts
   * IAM permissions
