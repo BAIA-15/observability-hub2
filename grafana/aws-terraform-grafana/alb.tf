@@ -48,8 +48,13 @@ resource "aws_lb" "grafana" {
   name               = var.ec2_name_prefix
   internal           = false # TODO - should be internal only
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.grafana_alb.id]
-  subnets            = [data.aws_subnet.compute_1.id, data.aws_subnet.compute_2.id]
+  security_groups = [
+    aws_security_group.grafana_alb.id
+  ]
+  subnets = [
+    data.aws_subnet.compute_1.id,
+    data.aws_subnet.compute_2.id
+  ]
 }
 
 # Resource: aws_lb_listener - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener

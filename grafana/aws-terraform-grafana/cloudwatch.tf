@@ -36,7 +36,7 @@ resource "aws_iam_role_policy" "grafana_vpc_flow_logs" {
   role   = aws_iam_role.grafana_vpc_flow_logs.id
   policy = data.aws_iam_policy_document.vpc_flow_logs_create_log_group.json
 }
-*/
+
 
 data "aws_iam_role" "grafana_vpc_flow_logs" {
   name = var.iam_role_vpc_flow_logs
@@ -55,3 +55,4 @@ resource "aws_cloudwatch_log_group" "grafana" {
   name              = "${var.ec2_name_prefix}_log_group"
   retention_in_days = 5
 }
+*/

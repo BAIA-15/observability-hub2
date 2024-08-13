@@ -1,5 +1,5 @@
 
-# Amazon EC2 security group
+# Resource: aws_security_group - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
 resource "aws_security_group" "grafana_ec2" {
   name        = "${var.ec2_name_prefix}_ec2_sg"
   description = "${var.ec2_name_prefix} EC2 security group - Managed by Terraform"
@@ -73,13 +73,22 @@ resource "aws_launch_template" "grafana" {
   monitoring {
     enabled = true
   }
+  network_interfaces {
+    associate_public_ip_address = false
+    description                 = "No public IP address"
+    security_groups             = [aws_security_group.grafana_ec2.id]
+  }
   update_default_version = true
   user_data = base64encode(
-    file(
-      "${path.module}/files/install_grafana_ubuntu.sh"
+    templatefile(
+      "${path.module}/files/install_grafana_ubuntu.tftpl",
+      {
+        efs-file-system-id = "${aws_efs_file_system.grafana.id}"
+        efs-mount-point    = "/var/lib/grafana"
+      }
     )
   )
-  vpc_security_group_ids = [aws_security_group.grafana_ec2.id]
+  # vpc_security_group_ids = [aws_security_group.grafana_ec2.id]
   tag_specifications {
     resource_type = "instance"
     tags = {
@@ -101,11 +110,15 @@ resource "aws_launch_template" "grafana" {
 
 # Amazon EC2 autoscaling group - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group
 resource "aws_autoscaling_group" "grafana" {
-  name                = "grafana_ec2_autoscaling_group"
-  desired_capacity    = 1
-  min_size            = 1
-  max_size            = 1
-  vpc_zone_identifier = [data.aws_subnet.compute_1.id, data.aws_subnet.compute_2.id]
+  name              = "grafana_ec2_autoscaling_group"
+  desired_capacity  = 1
+  health_check_type = "ELB"
+  min_size          = 1
+  max_size          = 1
+  vpc_zone_identifier = [
+    data.aws_subnet.compute_1.id,
+    data.aws_subnet.compute_2.id
+  ]
   launch_template {
     id      = aws_launch_template.grafana.id
     version = "$Latest"

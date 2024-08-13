@@ -26,7 +26,8 @@ This repository includes the [Terraform](https://www.terraform.io/) to provision
 `-- dynatrace
 `-- elastic
 `-- grafana
-`  -- terraform
+`  -- aws-cdk-grafana
+`  -- aws-terraform-grafana
 `-- images
 ```
 
@@ -78,7 +79,23 @@ terraform apply -replace tfplan
 terraform destroy --var-file=./environments/gnp-851725214198.tfvars
 ```
 
-### Terraform Commands
+## Create Graph
+
+Install dot
+
+```bash
+sudo apt install graphviz
+```
+
+Create a graph of the plan
+
+```bash
+terraform plan -out=tfplan --var-file=./environments/ncs-851725631136.tfvars
+terraform graph -plan=tfplan -type=plan | dot -Tpng >../images/grafana-terraform-plan.png
+```
+
+
+## Terraform Commands
 
 In your project folder, run the Terraform commands.
 
@@ -96,7 +113,7 @@ In your project folder, run the Terraform commands.
 ### Deploying Grafana with Terraform
 
 ```bash
-cd grafana\terraform
+cd grafana\aws-terraform-grafana
 terraform init
 terraform plan
 ```
@@ -206,11 +223,11 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
 * Change subnets reference to use a module (module.vpc.public_subnets)
 * Change vpc to use a module (module.vpc.vpc_id)
 * Review names of resources with "${var.ec2_name_prefix}"
+* Grafana should go in private EC2 instance - https://repost.aws/knowledge-center/ec2-systems-manager-vpc-endpoints
 * ~~Encrypt Grafana EFS~~
 * ~~[Fix default tags not picking up](https://support.hashicorp.com/hc/en-us/articles/4406026108435-Known-issues-with-default-tags-in-the-Terraform-AWS-Provider-3-38-0-4-67-0)~~
 
 # SSO
-
 * OU Sync - AWS to Azure
 * IdP initiated SAML - Azure AD
   * Need to domain join box - if 
