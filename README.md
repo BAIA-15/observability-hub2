@@ -60,13 +60,22 @@ terraform --version
 
 ### Example Terraform commands to deploy AWS resources
 
-#### NCS Environment
+#### NCS Environment - 851725631136
 
 ```bash
 terraform fmt
 terraform plan -out=tfplan --var-file=./environments/ncs-851725631136.tfvars
 terraform apply tfplan
 terraform destroy --var-file=./environments/ncs-851725631136.tfvars
+```
+
+#### NCS Environment - 730335216569
+
+```bash
+terraform fmt
+terraform plan -out=tfplan --var-file=./environments/ncs-730335216569.tfvars
+terraform apply tfplan
+terraform destroy --var-file=./environments/ncs-730335216569.tfvars
 ```
 
 #### GNP Environment
