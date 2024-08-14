@@ -79,7 +79,7 @@ terraform init
 Change to the Terraform folder for a project.
 
 ```bash
-cd dynatract/aws-terraform/
+cd dynatrace/aws-terraform/
 cd elastic/aws-terraform/
 cd grafana/aws-terraform/
 ```
