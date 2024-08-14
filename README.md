@@ -24,13 +24,15 @@ This repository includes the [Terraform](https://www.terraform.io/) to provision
 .
 |-- README.md
 `-- dynatrace
+`  -- aws-terraform
 `-- elastic
+`  -- aws-terraform
 `-- grafana
-`  -- aws-cdk-grafana
-`  -- aws-terraform-grafana
+`  -- aws-cdk
+`  -- aws-cli
+`  -- aws-terraform
 `-- images
 ```
-
 
 ## Windows Subsystem for Linux Version 2 (WSL2)
 
