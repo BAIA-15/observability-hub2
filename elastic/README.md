@@ -1,3 +1,10 @@
+# Elastic - Terraform Deployment Process
+
+## IAM Roles
+
+application-observability-ec2-elastic-agent
+
+
 
 
 

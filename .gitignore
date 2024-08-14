@@ -45,3 +45,4 @@ grafana/terraform/tfplan
 amdocs-bitbucket-gitlab/terraform.auto.tfvars
 *.code-workspace
 /grafana/aws-cdk-grafana/node_modules
+/grafana/aws-cdk/node_modules

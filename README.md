@@ -32,15 +32,30 @@ This repository includes the [Terraform](https://www.terraform.io/) to provision
 ```
 
 
-## WSL
+## Windows Subsystem for Linux Version 2 (WSL2)
 
-In a Windows command prompt (cmd)
+Windows Subsystem for Linux (WSL) is a feature of Microsoft Windows that allows developers to run a Linux environment without the need for a separate virtual machine or dual booting.
+
+In a Windows command prompt (cmd):
 
 ```bash
 wsl
 cd ~/github/observability-hub/
 code .
 ```
+
+### WSL2 date incorrect after waking from sleep
+
+If your development computer is left to sleep, the AWS CLI command may return errors if the system time deviates more than 15 minutes from the actual time.
+
+* Leave the Windows system untouched until it goes to sleep.
+* Wait for a while, say an hour.
+* Wake up the computer, and type "date" in WSL 2 shell
+
+Steps to fix:
+* `exit` in the cmd shell to exit wsl shell
+* `wsl --shutdown` to shutdown wsl
+* `wsl` to restart
 
 ## Terraform on AWS
 
@@ -56,14 +71,25 @@ sudo yum install -y yum-utils shadow-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 sudo yum -y install terraform
 terraform --version
+terraform init
 ```
 
 ### Example Terraform commands to deploy AWS resources
 
+Change to the Terraform folder for a project.
+
+```bash
+cd dynatract/aws-terraform/
+cd elastic/aws-terraform/
+cd grafana/aws-terraform/
+```
+
+Run the Terraform commands below for the AWS environment that you are deploying to.
+
 #### NCS Environment - 851725631136
 
 ```bash
-terraform fmt
+terraform fmt -recursive
 terraform plan -out=tfplan --var-file=./environments/ncs-851725631136.tfvars
 terraform apply tfplan
 terraform destroy --var-file=./environments/ncs-851725631136.tfvars
@@ -72,7 +98,7 @@ terraform destroy --var-file=./environments/ncs-851725631136.tfvars
 #### NCS Environment - 730335216569
 
 ```bash
-terraform fmt
+terraform fmt -recursive
 terraform plan -out=tfplan --var-file=./environments/ncs-730335216569.tfvars
 terraform apply tfplan
 terraform destroy --var-file=./environments/ncs-730335216569.tfvars
@@ -81,7 +107,7 @@ terraform destroy --var-file=./environments/ncs-730335216569.tfvars
 #### GNP Environment
 
 ```bash
-terraform fmt
+terraform fmt -recursive
 terraform plan -out=tfplan --var-file=./environments/gnp-851725214198.tfvars
 terraform apply tfplan
 terraform apply -replace tfplan
@@ -327,4 +353,29 @@ Backup - Using AWS Backup in the Observability Hub AWS account (defined by Vache
   * cloudtrail:ListEventDataStores
   * config:DescribeConfigurationRecorderStatus
 
-
+## Moving to Production account - Meeting with Madhukar Valiveti and Jackson Edwards
+* Controls are onboarded
+* Account itself for checklist
+* Solution design walk through
+* Scope of solution - controls that have been on-boarded
+* Provisioning of the cloud account - need to sign-off on this
+* Checklist of controls
+  * SRA - IT observability account
+  * Dynatrace and Elastic - SRA - UAM permission request for SaaS access
+  * CSPM for SIEM
+    * CloudTrail logs are centralized - infra access logs
+    * CloudWatch logs from applications
+      * Two options - S3 buckets or agent can collect from SIEM
+* Observability Hub hosts aggregators for logs and metrics
+* OH account will interact with other AWS accounts
+* Ready for PMX by October
+* Passed data governance, ARB, CMDB, Application Management 
+  * Small remaining on data privacy
+* Cloud account
+  * CSPM (Palo Alto)
+  * Application logging with SIEM
+  * No code scanning
+* Penetration cloud accounts
+  * Cat 1 and Cat 2 need pen testing
+* SRA filling out section under the sun
+* Admin role access goes to PIAM
