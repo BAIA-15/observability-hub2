@@ -1,9 +1,9 @@
 # NCS AWS account 851725631136
-aws_cli_profile     = "ncs"
+aws_cli_profile     = "default"
 aws_region          = "ap-southeast-2"
-main_vpc_id         = "vpc-03acfc82685dd7a33"    # AWS VPC id used in this deployment
-compute_subnet_1_id = "subnet-0284b0ef91aea0ea6" # The first subnet id used in this deployment
-compute_subnet_2_id = "subnet-0815036e894d811e5" # The second subnet id used in this deployment
+main_vpc_id         = "vpc-02280651c8c6db8e8"    # AWS VPC id used in this deployment
+compute_subnet_1_id = "subnet-0bb6d400681613925" # The first subnet id used in this deployment
+compute_subnet_2_id = "subnet-01a6efda88f339507" # The second subnet id used in this deployment
 # ec2_ami_id            = "ami-030a5acd7c996ef60"    # EC2 AMI id - Amazon Linux 2023
 ec2_ami_id            = "ami-03f0544597f43a91d" # Ubuntu Server 24.04 LTS
 aws_ec2_instance_type = "t2.micro"              # EC2 instance type

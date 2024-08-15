@@ -7,7 +7,7 @@ compute_subnet_2_id = "subnet-0815036e894d811e5" # The second subnet id used in 
 # ec2_ami_id            = "ami-030a5acd7c996ef60"    # EC2 AMI id - Amazon Linux 2023
 ec2_ami_id            = "ami-03f0544597f43a91d" # Ubuntu Server 24.04 LTS
 aws_ec2_instance_type = "t2.micro"              # EC2 instance type
-sns_email = "jacob.cantwell@gmail.com"
+sns_email             = "jacob.cantwell@gmail.com"
 aws_vpc_endpoints = [
   "ssm",               # AWS Systems Manager - com.amazonaws.ap-southeast-2.ssm
   "ec2messages",       # AWS Systems Manager - com.amazonaws.ap-southeast-2.ec2messages
