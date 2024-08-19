@@ -88,7 +88,7 @@ cd grafana/aws-terraform/
 
 Run the Terraform commands below for the AWS environment that you are deploying to.
 
-#### NCS Environment - 851725631136
+#### NCS Environment - 851725631136 - JC
 
 ```bash
 terraform fmt -recursive
@@ -97,7 +97,7 @@ terraform apply tfplan
 terraform destroy --var-file=./environments/ncs-851725631136.tfvars
 ```
 
-#### NCS Environment - 730335216569 Henry
+#### NCS Environment - 730335216569 - HA
 
 ```bash
 terraform fmt -recursive

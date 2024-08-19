@@ -66,6 +66,7 @@ resource "aws_launch_template" "dynatrace" {
     associate_public_ip_address = true
     description                 = "No public IP address"
     security_groups             = [aws_security_group.dynatrace_ec2.id]
+    subnet_id = data.aws_subnet.compute_1.id
   }
   update_default_version = true
   user_data = base64encode(
